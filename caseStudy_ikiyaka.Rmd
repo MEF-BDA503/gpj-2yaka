@@ -1,0 +1,55 @@
+---
+title: "Welcome_to_University"
+output: html_document
+---
+
+
+Here are the libraries that we are going to use:
+```{r}
+library(data.table)
+library(dplyr)
+options(dplyr.width=Inf)
+library('ggplot2') # visualization
+library('scales') # visualization
+library('dplyr') # data manipulation
+Sys.setlocale(locale = "Turkish_Turkey.1254")
+
+```
+We load OSYM 2017 data as follows:
+```{r}
+getwd()
+load("C:/Users/merye/Desktop/osym_data_2017.RData")
+d=osym_data_2017
+```
+
+Dimensions of our data are `r dim(osym_data_2017)`.
+
+
+```{r}
+glimpse(d)
+```
+
+We excluded abroad universities and state universities by using *filter*:
+```{r}
+dtr=d %>% filter(!(substr(program_id,1,1) %in% c('3','4','1')))
+print(dtr)
+```
+
+Later we groupped private universities in Ýstanbul by their program names and ordered by max scores in descending order.
+```{r}
+dtr %>% filter(city=='ÝSTANBUL') %>% select(university_name,program_name,max_score,general_quota,general_placement)  %>% group_by(program_name) %>%  arrange(desc(max_score))
+```
+
+Private universities in Ýstanbul grouped by their names. Their total general quota 
+
+```{r}
+dpr = dtr %>% filter(city=='ÝSTANBUL') %>% group_by(university_name) %>% summarise(sayi =n(), toplamkota=sum(general_quota), toplamyerlesen=sum(general_placement), doluluk_yuzdesi =sum(toplamyerlesen*100/toplamkota))  %>% group_by(university_name) %>%  arrange(desc(toplamkota))
+print(head(dpr,100))
+```
+Fill rate of MEF University is as follows:
+```{r}
+dpr %>%  filter(university_name=="MEF ÜNÝVERSÝTESÝ")
+
+```
+
+
