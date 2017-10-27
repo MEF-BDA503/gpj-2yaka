@@ -1,4 +1,4 @@
----
+ï»¿---
 title: "Group Proposal-2Yaka"
 author: "Group 2Yaka"
 date: "27 Ekim 2017"
@@ -21,8 +21,8 @@ We named our group as *2Yaka*.
 Our group's members are:
 1. Meryem Kemerci
 2. Duygu Can
-3. Murat Dönmez
-4. Cihan Tektunalý
+3. Murat DÃ¶nmez
+4. Cihan TektunalÃ½
 
 Our data set is coming from the results of satisfaction surveys a company has applied to their employess. This data set consists of 14999 rows and 10 columns. Type of 8 columns is string, while other 2 columns are numeric.
 

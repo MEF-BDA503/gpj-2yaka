@@ -2,4 +2,4 @@
 
  [Here](caseStudy.html) you can find our preliminary work on OSYM 2017 case study.
 
-[Group Project Proposal](Group_Project_-_2Yaka.html)
+[Group Project Proposal](Group_Project_2Yaka.html)
