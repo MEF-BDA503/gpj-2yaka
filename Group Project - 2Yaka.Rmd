@@ -1,0 +1,43 @@
+---
+title: "Group Proposal-2Yaka"
+author: "Group 2Yaka"
+date: "27 Ekim 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Abstract
+
+The dataset we choose is about human resources. Our aim is to answer an interesting question by a company like "*Why are our best and most experienced employees leaving prematurely?*" We will try to find an answer to this question by analyzing answers of employees to specific questions about their conditions in work environment. The dataset is formed by the employer after surveying their employees.
+
+
+## Group and Data Set Information
+
+We named our group as *2Yaka*. 
+
+Our group's members are:
+1. Meryem Kemerci
+2. Duygu Can
+3. Murat Dönmez
+4. Cihan Tektunalý
+
+Our data set is coming from the results of satisfaction surveys a company has applied to their employess. This data set consists of 14999 rows and 10 columns. Type of 8 columns is string, while other 2 columns are numeric.
+
+Our objective is to make predictions about the probabilities that employees may leave their company and what to change to increase their satisfaction levels. We will try to give insights to make best employees more loyal.
+
+Our tentative plan is as follows:
+
+1. Explore the dimensions of variables
+2. Clean the data if required
+3. Summarise the data and search for correlations wherever possible
+4. Visualize the filtered results
+5. Make conclusions and give insights
+
+## References
+
+[Human Resources Analytics Data Set](https://www.kaggle.com/ludobenistant/hr-analytics/data)
+
+
