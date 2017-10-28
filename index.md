@@ -1,7 +1,7 @@
 ﻿## 2Yaka's Progress Journal
 
- [Here](caseStudy.html) you can find our preliminary work on OSYM 2017 case study.
++ [Here](caseStudy.html) you can find our preliminary work on OSYM 2017 case study.
 
 #Group Project Proposal 
 
- [Here](Group_Project2Yaka.html)
++ [Here](Group_Project2Yaka.html)
