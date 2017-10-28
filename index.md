@@ -2,7 +2,7 @@
 
 ### Oct 28
 
-+ [Here](caseStudy2.html) you can find our preliminary work on OSYM 2017 case study.
++ [Here](caseStudy.html) you can find our preliminary work on OSYM 2017 case study.
 
 ### Oct 29
 
