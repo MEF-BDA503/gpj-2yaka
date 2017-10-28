@@ -1,7 +1,9 @@
-﻿## 2Yaka's Progress Journal
+## 2Yaka's Progress Journal
+
+### Oct 28
 
 + [Here](caseStudy2.html) you can find our preliminary work on OSYM 2017 case study.
 
-#Group Project Proposal 
+### Oct 29
 
 + [Here](Group_Project2Yaka.html) is our Group Project Proposal. 
