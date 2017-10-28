@@ -2,7 +2,7 @@
 title: "Welcome_to_University"
 output: html_document
 ---
-#Exploring ÖSYM 2017 Data
+#Exploring OSYM 2017 Data
 
 Here are the libraries that we are going to use:
 ```{r}
