@@ -4,4 +4,4 @@
 
 #Group Project Proposal 
 
-+ [Here](Group_Project2Yaka.html)
++ [Here](Group_Project2Yaka.html) is our Group Project Proposal. 

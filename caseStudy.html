@@ -136,15 +136,14 @@ library(dplyr)</code></pre>
 <pre><code>## The following objects are masked from 'package:base':
 ## 
 ##     intersect, setdiff, setequal, union</code></pre>
-<pre class="r"><code>options(dplyr.width=Inf)
-library('ggplot2') # visualization
-library('scales') # visualization
-library('dplyr') # data manipulation
+<pre class="r"><code>library(ggplot2) # visualization
+library(scales) # visualization
+library(dplyr) # data manipulation
 Sys.setlocale(locale = &quot;Turkish_Turkey.1254&quot;)</code></pre>
 <pre><code>## [1] &quot;LC_COLLATE=Turkish_Turkey.1254;LC_CTYPE=Turkish_Turkey.1254;LC_MONETARY=Turkish_Turkey.1254;LC_NUMERIC=C;LC_TIME=Turkish_Turkey.1254&quot;</code></pre>
 <p>We control our workspace path and after confirmation we load OSYM 2017 data as follows:</p>
 <pre class="r"><code>getwd()</code></pre>
-<pre><code>## [1] &quot;C:/Users/merye/Desktop&quot;</code></pre>
+<pre><code>## [1] &quot;C:/Users/merye/Documents/GitHub/gpj-2yaka&quot;</code></pre>
 <pre class="r"><code>load(&quot;C:/Users/merye/Desktop/osym_data_2017.RData&quot;)</code></pre>
 <p>Dimensions for our data:</p>
 <pre class="r"><code>dim(osym_data_2017)</code></pre>
@@ -172,55 +171,61 @@ glimpse(d)</code></pre>
 <pre class="r"><code>dtr=d %&gt;% filter(!(substr(program_id,1,1) %in% c('3','4','1')))
 print(dtr)</code></pre>
 <pre><code>## # A tibble: 4,350 x 14
-##    program_id                           university_name     city                                 faculty_name                                           program_name exam_type general_quota general_placement min_score max_score val_quota val_placement val_min_score val_max_score
-##         &lt;int&gt;                                     &lt;chr&gt;    &lt;chr&gt;                                        &lt;chr&gt;                                                  &lt;chr&gt;     &lt;chr&gt;         &lt;int&gt;             &lt;int&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;
-##  1  200110283 ACIBADEM MEHMET ALY AYDINLAR ÜNYVERSYTESY YSTANBUL              Eczacylyk Fakültesi (Yngilizce)                     Eczacylyk (Yngilizce) (%50 Burslu)      MF_3             5                 5  427.8876  442.4144         0             0           180           180
-##  2  200110274 ACIBADEM MEHMET ALY AYDINLAR ÜNYVERSYTESY YSTANBUL Eczacylyk Fakültesi (Yngilizce) (Tam Burslu)                     Eczacylyk (Yngilizce) (Tam Burslu)      MF_3             5                 5  443.5924  448.1646         0             0           180           180
-##  3  200110265 ACIBADEM MEHMET ALY AYDINLAR ÜNYVERSYTESY YSTANBUL         Eczacylyk Fakültesi (Yngilizce)etli)                        Eczacylyk (Yngilizce) (Ücretli)      MF_3            40                40  384.9069  424.9661         0             0           180           180
-##  4  200110229 ACIBADEM MEHMET ALY AYDINLAR ÜNYVERSYTESY YSTANBUL                     Fen - Edebiyat Fakültesi Moleküler Biyoloji ve Genetik (Yngilizce) (%25 Burslu)      MF_3            13                13  278.8386  333.9753         0             0           180           180
-##  5  200110247 ACIBADEM MEHMET ALY AYDINLAR ÜNYVERSYTESY YSTANBUL                     Fen - Edebiyat Fakültesi Moleküler Biyoloji ve Genetik (Yngilizce) (%50 Burslu)      MF_3            13                13  353.1128  400.0741         0             0           180           180
-##  6  200110211 ACIBADEM MEHMET ALY AYDINLAR ÜNYVERSYTESY YSTANBUL                     Fen - Edebiyat Fakültesi Moleküler Biyoloji ve Genetik (Yngilizce) (Tam Burslu)      MF_3             4                 4  446.7819  455.0095         0             0           180           180
-##  7  200110123 ACIBADEM MEHMET ALY AYDINLAR ÜNYVERSYTESY YSTANBUL                     Fen - Edebiyat Fakültesi                                 Psikoloji (Tam Burslu)      TM_3             6                 6  429.0451  434.5553         0             0           180           180
-##  8  200110114 ACIBADEM MEHMET ALY AYDINLAR ÜNYVERSYTESY YSTANBUL                     Fen - Edebiyat Fakültesi                                    Psikoloji (Ücretli)      TM_3            54                54  277.5273  334.6559         0             0           180           180
-##  9  200110308 ACIBADEM MEHMET ALY AYDINLAR ÜNYVERSYTESY YSTANBUL                     Fen - Edebiyat Fakültesi                     Sosyoloji (Yngilizce) (%50 Burslu)      TM_3            36                12  205.1829  270.2880         0             0           180           180
-## 10  200110317 ACIBADEM MEHMET ALY AYDINLAR ÜNYVERSYTESY YSTANBUL                     Fen - Edebiyat Fakültesi                     Sosyoloji (Yngilizce) (Tam Burslu)      TM_3             4                 4  365.4432  370.5646         0             0           180           180
-## # ... with 4,340 more rows</code></pre>
+##    program_id                           university_name     city
+##         &lt;int&gt;                                     &lt;chr&gt;    &lt;chr&gt;
+##  1  200110283 ACIBADEM MEHMET ALY AYDINLAR ÜNYVERSYTESY YSTANBUL
+##  2  200110274 ACIBADEM MEHMET ALY AYDINLAR ÜNYVERSYTESY YSTANBUL
+##  3  200110265 ACIBADEM MEHMET ALY AYDINLAR ÜNYVERSYTESY YSTANBUL
+##  4  200110229 ACIBADEM MEHMET ALY AYDINLAR ÜNYVERSYTESY YSTANBUL
+##  5  200110247 ACIBADEM MEHMET ALY AYDINLAR ÜNYVERSYTESY YSTANBUL
+##  6  200110211 ACIBADEM MEHMET ALY AYDINLAR ÜNYVERSYTESY YSTANBUL
+##  7  200110123 ACIBADEM MEHMET ALY AYDINLAR ÜNYVERSYTESY YSTANBUL
+##  8  200110114 ACIBADEM MEHMET ALY AYDINLAR ÜNYVERSYTESY YSTANBUL
+##  9  200110308 ACIBADEM MEHMET ALY AYDINLAR ÜNYVERSYTESY YSTANBUL
+## 10  200110317 ACIBADEM MEHMET ALY AYDINLAR ÜNYVERSYTESY YSTANBUL
+## # ... with 4,340 more rows, and 11 more variables: faculty_name &lt;chr&gt;,
+## #   program_name &lt;chr&gt;, exam_type &lt;chr&gt;, general_quota &lt;int&gt;,
+## #   general_placement &lt;int&gt;, min_score &lt;dbl&gt;, max_score &lt;dbl&gt;,
+## #   val_quota &lt;dbl&gt;, val_placement &lt;dbl&gt;, val_min_score &lt;dbl&gt;,
+## #   val_max_score &lt;dbl&gt;</code></pre>
 <p>Later we groupped private universities in İstanbul by their program names and ordered by max scores in descending order to compare their success orders.</p>
 <pre class="r"><code>dtr %&gt;% filter(city=='İSTANBUL') %&gt;% select(university_name,program_name,max_score,general_quota,general_placement)  %&gt;% group_by(program_name) %&gt;%  arrange(desc(max_score))</code></pre>
 <pre><code>## # A tibble: 3,173 x 5
 ## # Groups:   program_name [957]
-##                              university_name                                                       program_name max_score general_quota general_placement
-##                                        &lt;chr&gt;                                                              &lt;chr&gt;     &lt;dbl&gt;         &lt;int&gt;             &lt;int&gt;
-##  1                          KOÇ ÜNYVERSYTESY        Elektrik - Elektronik Mühendisli&lt;U+00F0&gt;i (Yngilizce) (Tam Burslu)  569.1112             8                 8
-##  2             YSTANBUL MEDYPOL ÜNYVERSYTESY                             Typ Fakültesi (Yngilizce) (Tam Burslu)  559.4780            10                10
-##  3                          KOÇ ÜNYVERSYTESY                                                 Hukuk (Tam Burslu)  558.3680            11                11
-##  4                          KOÇ ÜNYVERSYTESY                                       Typ (Yngilizce) (Tam Burslu)  556.8882            15                15
-##  5                          KOÇ ÜNYVERSYTESY                   Bilgisayar Mühendisli&lt;U+00F0&gt;i (Yngilizce) (Tam Burslu)  550.9200             7                 7
-##  6 ACIBADEM MEHMET ALY AYDINLAR ÜNYVERSYTESY                                       Typ (Yngilizce) (Tam Burslu)  542.3482            30                30
-##  7                          KOÇ ÜNYVERSYTESY                     Endüstri Mühendisli&lt;U+00F0&gt;i (Yngilizce) (Tam Burslu)  540.3631             9                 9
-##  8                          KOÇ ÜNYVERSYTESY                                   Y&lt;U+00FE&gt;letme (Yngilizce) (Tam Burslu)  538.9466            13                13
-##  9                      SABANCI ÜNYVERSYTESY Mühendislik ve Do&lt;U+00F0&gt;a Bilimleri Programlary (Yngilizce) (Tam Burslu)  538.7725            32                32
-## 10                          KOÇ ÜNYVERSYTESY           Elektrik - Elektronik Mühendisli&lt;U+00F0&gt;i (Yngilizce) (Ücretli)  538.6899            63                63
-## # ... with 3,163 more rows</code></pre>
+##                              university_name
+##                                        &lt;chr&gt;
+##  1                          KOÇ ÜNYVERSYTESY
+##  2             YSTANBUL MEDYPOL ÜNYVERSYTESY
+##  3                          KOÇ ÜNYVERSYTESY
+##  4                          KOÇ ÜNYVERSYTESY
+##  5                          KOÇ ÜNYVERSYTESY
+##  6 ACIBADEM MEHMET ALY AYDINLAR ÜNYVERSYTESY
+##  7                          KOÇ ÜNYVERSYTESY
+##  8                          KOÇ ÜNYVERSYTESY
+##  9                      SABANCI ÜNYVERSYTESY
+## 10                          KOÇ ÜNYVERSYTESY
+## # ... with 3,163 more rows, and 4 more variables: program_name &lt;chr&gt;,
+## #   max_score &lt;dbl&gt;, general_quota &lt;int&gt;, general_placement &lt;int&gt;</code></pre>
 <p>To get a better look on the data, we calculated quota fill rate of these universities and ordered them by teir fill rates</p>
 <pre class="r"><code>dpr = dtr %&gt;% filter(city=='İSTANBUL') %&gt;% group_by(university_name) %&gt;% summarise(sayi =n(), totalquota=sum(general_quota), totalplacement=sum(general_placement), fillrate =sum(totalplacement*100/totalquota))  %&gt;% group_by(university_name) %&gt;%  arrange(desc(fillrate))
 
 print(head(dpr,100))</code></pre>
 <pre><code>## # A tibble: 41 x 5
 ## # Groups:   university_name [41]
-##                              university_name  sayi totalquota totalplacement  fillrate
-##                                        &lt;chr&gt; &lt;int&gt;      &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;
-##  1                   YBN HALDUN ÜNYVERSYTESY    10        140            140 100.00000
-##  2          YSTANBUL AYVANSARAY ÜNYVERSYTESY     4        100            100 100.00000
-##  3                      SABANCI ÜNYVERSYTESY    15        745            745 100.00000
-##  4                          KOÇ ÜNYVERSYTESY    63       1054           1050  99.62049
-##  5                      ÖZYE&lt;U+00D0&gt;YN ÜNYVERSYTESY    66       1298           1287  99.15254
-##  6          BEZM - Y ÂLEM VAKIF ÜNYVERSYTESY    26        467            461  98.71520
-##  7     YSTANBUL SABAHATTYN ZAYM ÜNYVERSYTESY    71       1060           1042  98.30189
-##  8             YSTANBUL MEDYPOL ÜNYVERSYTESY   155       4495           4305  95.77308
-##  9                    NY&lt;U+00DE&gt;ANTA&lt;U+00DE&gt;I ÜNYVERSYTESY    90       1362           1302  95.59471
-## 10 ACIBADEM MEHMET ALY AYDINLAR ÜNYVERSYTESY    23        540            516  95.55556
-## # ... with 31 more rows</code></pre>
+##                              university_name  sayi totalquota
+##                                        &lt;chr&gt; &lt;int&gt;      &lt;int&gt;
+##  1                   YBN HALDUN ÜNYVERSYTESY    10        140
+##  2          YSTANBUL AYVANSARAY ÜNYVERSYTESY     4        100
+##  3                      SABANCI ÜNYVERSYTESY    15        745
+##  4                          KOÇ ÜNYVERSYTESY    63       1054
+##  5                      ÖZYE&lt;U+00D0&gt;YN ÜNYVERSYTESY    66       1298
+##  6          BEZM - Y ÂLEM VAKIF ÜNYVERSYTESY    26        467
+##  7     YSTANBUL SABAHATTYN ZAYM ÜNYVERSYTESY    71       1060
+##  8             YSTANBUL MEDYPOL ÜNYVERSYTESY   155       4495
+##  9                    NY&lt;U+00DE&gt;ANTA&lt;U+00DE&gt;I ÜNYVERSYTESY    90       1362
+## 10 ACIBADEM MEHMET ALY AYDINLAR ÜNYVERSYTESY    23        540
+## # ... with 31 more rows, and 2 more variables: totalplacement &lt;int&gt;,
+## #   fillrate &lt;dbl&gt;</code></pre>
 <p>We find that MEF University has a fill rate of over 90 percent:</p>
 <pre class="r"><code>dpr %&gt;%  filter(university_name==&quot;MEF ÜNİVERSİTESİ&quot;)</code></pre>
 <pre><code>## # A tibble: 1 x 5

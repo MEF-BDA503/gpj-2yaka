@@ -8,10 +8,9 @@ Here are the libraries that we are going to use:
 ```{r}
 library(data.table)
 library(dplyr)
-options(dplyr.width=Inf)
-library('ggplot2') # visualization
-library('scales') # visualization
-library('dplyr') # data manipulation
+library(ggplot2) # visualization
+library(scales) # visualization
+library(dplyr) # data manipulation
 Sys.setlocale(locale = "Turkish_Turkey.1254")
 
 ```
