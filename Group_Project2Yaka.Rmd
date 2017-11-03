@@ -1,7 +1,7 @@
-﻿---
+---
 title: "Group Proposal-2Yaka"
 author: "Group 2Yaka"
-date: "27 Ekim 2017"
+date: "27 October 2017"
 output: html_document
 ---
 
@@ -11,24 +11,54 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Abstract
 
+
+![](C:\Users\merye\Desktop\HR.jpg) 
+
+
+
 The dataset we choose is about human resources. Our aim is to answer an interesting question by a company like "*Why are our best and most experienced employees leaving prematurely?*" We will try to find an answer to this question by analyzing answers of employees to specific questions about their conditions in work environment. The dataset is formed by the employer after surveying their employees.
 
 
-## Group and Data Set Information
+# Group and Data Set Information
 
 We named our group as *2Yaka*. 
 
 Our group's members are:
-1. Meryem Kemerci
-2. Duygu Can
-3. Murat Dönmez
-4. Cihan Tektunalý
 
-Our data set is coming from the results of satisfaction surveys a company has applied to their employess. This data set consists of 14999 rows and 10 columns. Type of 8 columns is string, while other 2 columns are numeric.
+* Meryem Kemerci
+* Duygu Can
+* Murat Donmez
+* Cihan Tektunali
+
+## Data 
+
+Our data set is coming from the results of satisfaction surveys a company has applied to their employees. This data set consists of 14999 rows and 10 columns. Type of 8 columns is string, while other 2 columns are numeric such as;
+
+
+**1.**Satisfaction Level 
+
+**2.**Last evaluation 
+
+**3.**Number of projects 
+
+**4.**Average monthly hours 
+
+**5.**Time spent at the company 
+
+**6.**Whether they have had a work accident 
+
+**7.**Whether they have had a promotion in the last 5 years 
+
+**8.**Departments (column sales) 
+
+**9.**Salary 
+
+**10.**Whether the employee has left 
+
 
 Our objective is to make predictions about the probabilities that employees may leave their company and what to change to increase their satisfaction levels. We will try to give insights to make best employees more loyal.
 
-Our tentative plan is as follows:
+##Our tentative plan is as follows:
 
 1. Explore the dimensions of variables
 2. Clean the data if required
