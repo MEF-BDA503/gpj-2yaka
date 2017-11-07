@@ -1,6 +1,7 @@
 ---
 title: "Welcome_to_University"
 output: html_document
+version: "duygu2051"
 ---
 #Exploring OSYM 2017 Data
 
@@ -18,7 +19,7 @@ We control our workspace path and after confirmation we load OSYM 2017 data as f
 ```{r}
 getwd()
 #load("C:/Users/merye/Desktop/osym_data_2017.RData")
-download.file("https://mef-bda503.github.io/files/osym_data_2017.RData", 
+download.file("https://mef-bda503.github.io/files/osym_data_2017_v2.RData", 
     "osym_data_2017.Rdata")
 load("osym_data_2017.RData")
 ```
@@ -40,7 +41,10 @@ We excluded abroad universities and state universities by using *filter* and giv
 dtr=d %>% filter(!(substr(program_id,1,1) %in% c('3','4','1')))
 print(dtr)
 ```
-
+```{r}
+is.na(d)
+dim(d)
+```
 Later we groupped private universities in Ä°stanbul by their program names and ordered by max scores in descending order to compare their success orders.
 ```{r}
 dtr %>% filter(city=='ÝSTANBUL') %>% select(university_name,program_name,max_score,general_quota,general_placement)  %>% group_by(program_name) %>%  arrange(desc(max_score))
