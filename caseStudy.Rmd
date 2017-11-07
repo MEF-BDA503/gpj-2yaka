@@ -24,25 +24,27 @@ download.file("https://mef-bda503.github.io/files/osym_data_2017_v2.RData",
 load("osym_data_2017.RData")
 ```
 
-Dimensions for our data are:
+Dimensions for reshaped data are:
 ```{r}
-d=osym_data_2017
+d=osym_data_2017 %>% mutate(general_quota =as.numeric(general_quota),general_placement=as.numeric(general_placement))
+
 dim(d)
 ```
 
 We give an alias to our dataset as 'd' and see the detailed information about data:
 ```{r}
-
 glimpse(d)
 ```
-
+Let's see average values of minimum and maximum scores of the universities:
+```{r}
+d %>% group_by(university_name) %>% summarise(avgmin=mean(min_score),avgmax=mean(max_score))
+```
 We excluded abroad universities and state universities by using *filter* and give it a new name:
 ```{r}
 dtr=d %>% filter(!(substr(program_id,1,1) %in% c('3','4','1')))
 print(dtr)
 ```
 ```{r}
-is.na(d)
 dim(d)
 ```
 Later we groupped private universities in Ä°stanbul by their program names and ordered by max scores in descending order to compare their success orders.
@@ -53,7 +55,7 @@ dtr %>% filter(city=='İSTANBUL') %>% select(university_name,program_name,max_sco
 To get a better look on the data, we calculated quota fill rate of these universities and ordered them by teir fill rates
 
 ```{r}
-dpr = dtr %>% filter(city=='İSTANBUL') %>% group_by(university_name) %>% summarise(sayi =n(), totalquota=sum(general_quota), totalplacement=sum(general_placement), fillrate =sum(totalplacement*100/totalquota))  %>% group_by(university_name) %>%  arrange(desc(fillrate))
+dpr = dtr %>% filter(city=='İSTANBUL') %>% group_by(university_name) %>% summarise(sayi =n(), totalquota=sum(as.numeric(general_quota)), totalplacement=sum(general_placement), fillrate =sum(totalplacement*100/totalquota))  %>% group_by(university_name) %>%  arrange(desc(fillrate))
 
 print(head(dpr,100))
 ```
