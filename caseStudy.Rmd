@@ -1,18 +1,19 @@
 ---
 title: "Welcome_to_University"
 output: html_document
-version: "duygu2051"
+version: "duygu 8.11.2017, 08:50"
 ---
 #Exploring OSYM 2017 Data
-
+At first we need to handle encodingp problem,
+```{r}
+Sys.setlocale(locale = "Turkish")
+```
 Here are the libraries that we are going to use:
 ```{r}
 library(data.table)
-library(dplyr)
 library(ggplot2) # visualization
 library(scales) # visualization
 library(dplyr) # data manipulation
-Sys.setlocale(locale = "Turkish_Turkey.1254")
 
 ```
 We control our workspace path and after confirmation we load OSYM 2017 data as follows:
