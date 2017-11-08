@@ -1,0 +1,82 @@
+---
+title: "Welcome_to_University"
+output: html_document
+version: "duygu 8.11.2017, 08:50"
+---
+#Exploring OSYM 2017 Data
+At first we need to handle encoding problem for proper visiualization of Turkish characters:
+```{r}
+Sys.setlocale(locale = "Turkish_Turkey.1254")
+```
+Here are the libraries that we are going to use:
+```{r}
+library(data.table)
+library(ggplot2) # visualization
+library(scales) # visualization
+library(dplyr) # data manipulation
+
+```
+We control our workspace path and after confirmation we load OSYM 2017 data as follows:
+```{r}
+getwd()
+#load("C:/Users/merye/Desktop/osym_data_2017.RData")
+download.file("https://mef-bda503.github.io/files/osym_data_2017_v2.RData", 
+    "osym_data_2017.Rdata")
+load("osym_data_2017.RData")
+```
+
+Dimensions for reshaped data are:
+```{r}
+d=osym_data_2017 %>% mutate(general_quota =as.numeric(general_quota),general_placement=as.numeric(general_placement))
+
+dim(d)
+```
+
+We give an alias to our dataset as 'd' and see the detailed information about data:
+```{r}
+glimpse(d)
+```
+Let's see average values of minimum and maximum scores of the universities:
+```{r}
+d %>% group_by(university_name) %>% summarise(avgmin=mean(min_score),avgmax=mean(max_score))
+```
+We excluded abroad universities and state universities by using *filter* and give it a new name:
+```{r}
+dtr=d %>% filter(!(substr(program_id,1,1) %in% c('3','4','1')))
+print(dtr)
+```
+```{r}
+dim(d)
+```
+Later we groupped private universities in Ä°stanbul by their program names and ordered by max scores in descending order to compare their success orders.
+```{r}
+dtr %>% filter(city=='ÝSTANBUL') %>% select(university_name,program_name,max_score,general_quota,general_placement)  %>% group_by(program_name) %>%  arrange(desc(max_score))
+```
+
+To get a better look on the data, we calculated quota fill rate of these universities and ordered them by teir fill rates
+
+```{r}
+dpr = dtr %>% filter(city=='ÝSTANBUL') %>% group_by(university_name) %>% summarise(sayi =n(), totalquota=sum(as.numeric(general_quota)), totalplacement=sum(general_placement), fillrate =sum(totalplacement*100/totalquota))  %>% group_by(university_name) %>%  arrange(desc(fillrate))
+
+print(head(dpr,100))
+```
+We find that MEF University has a fill rate of over 90 percent:
+```{r}
+dpr %>%  filter(university_name=="MEF ÜNÝVERSÝTESÝ")
+
+```
+Let's visualize our private universities data with bar a chart
+
+```{r}
+#dord=order(dpr$fillrate)
+#dord2=head(dord,12)
+dpr$university_name=substr(dpr$university_name,1,10)
+dpr=head(dpr,12)
+ggplot(data=dpr, aes(x=reorder(dpr$university_name, desc(dpr$fillrate)),y=dpr$fillrate,fill=dpr$fillrate))+
+theme(axis.text.x = element_text(angle = 60, hjust=1))+
+geom_bar(stat="identity",width = 0.95)+
+   labs(title = "Top 12 Private Universities in Ýstanbul By Quota Fill Rate")+
+    labs(x = "Universities", y = "Quota\nFill Rate") +
+expand_limits(y=100)
+```
+
