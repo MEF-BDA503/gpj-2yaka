@@ -1,5 +1,5 @@
 theme: jekyll-theme-cayman
 
 encoding: UTF-8
-exclude: ['*.Rmd']
+exclude: ["*.Rmd"]
 
