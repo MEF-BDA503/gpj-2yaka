@@ -190,9 +190,11 @@ According to above histograms, we found that; there was nearly no promoted emplo
 # }
 ```
 
-Now, let's look at the categorical variables (i.e salary, department name)
+Now, let's look at the categorical variables, salary and department name. We wanted to compare left and none-left employee counts by departments and salary categories. When salary category does not give much insight about the characteristics of left people, we found that the 3 departments have considerably higher number of people left. These departments are sales, technical and support.
 ```{r}
-p9 <- ggplot(d, aes(x=d$departments,fill=as.character(d$left) ))+theme(axis.text.x = element_text(angle = 60, hjust=1))+
+
+p9 <- ggplot(d, aes(x=d$departments,fill=as.character(d$left) ))
+      +theme(axis.text.x = element_text(angle = 60, hjust=1))+
       geom_bar()
 
 p10 <- ggplot(d, aes(x=d$salary,fill=as.character(d$left) ))+
@@ -203,6 +205,8 @@ multiplot(p9,p10,cols=2)
 
 
 ```
+
+
 ```{r}
 
  ggplot(data=d, aes(x=departments, y=satisfaction_level)) +
@@ -210,5 +214,19 @@ multiplot(p9,p10,cols=2)
 
 # ggplot(d, aes(x=salary, y=satisfaction_level)) +
 #   geom_point(size=2, shape=23)
+```
+```{r}
+department_left_rate<-d %>%
+  group_by(departments) %>%
+  summarise (n = n()) %>%
+  mutate(freq = n / sum(n))
+
+department_left_rate
+
+
+ggplot(department_left_rate, aes(x=department_left_rate$departments,y=department_left_rate$freq ))+
+      theme(axis.text.x = element_text(angle = 60, hjust=1))+
+      geom_bar()
+
 ```
 
