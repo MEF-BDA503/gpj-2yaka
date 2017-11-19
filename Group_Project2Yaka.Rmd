@@ -1,75 +1,4 @@
----
-title: "Group Proposal-2Yaka"
-author: "Group 2Yaka"
-date: "27 October 2017"
-output: html_document
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-## Abstract
-
-
-![](C:\Users\merye\Desktop\HR.jpg) 
-
-
-
-The dataset we choose is about human resources. Our aim is to answer an interesting question by a company like "*Why are our best and most experienced employees leaving prematurely?*" We will try to find an answer to this question by analyzing answers of employees to specific questions about their conditions in work environment. The dataset is formed by the employer after surveying their employees.
-
-
-# Group and Data Set Information
-
-We named our group as *2Yaka*. 
-
-Our group's members are:
-
-* Meryem Kemerci
-* Duygu Can
-* Murat Donmez
-* Cihan Tektunali
-
-## Data Definition
-
-Our data set is coming from the results of satisfaction surveys a company has applied to their employees. This data set consists of 14999 rows and 10 columns. Type of 8 columns is string, while other 2 columns are numeric such as;
-
-
-**1.**Satisfaction Level 
-
-**2.**Last evaluation 
-
-**3.**Number of projects 
-
-**4.**Average monthly hours 
-
-**5.**Time spent at the company 
-
-**6.**Whether they have had a work accident 
-
-**7.**Whether they have had a promotion in the last 5 years 
-
-**8.**Departments (column sales) 
-
-**9.**Salary 
-
-**10.**Whether the employee has left 
-
-
-Our objective is to make predictions about the probabilities that employees may leave their company and what to change to increase their satisfaction levels. We will try to give insights to make best employees more loyal.
-
-##Our tentative plan is as follows:
-
-1. Explore the dimensions of variables
-2. Clean the data if required
-3. Summarise the data and search for correlations wherever possible
-4. Visualize the filtered results
-5. Make conclusions and give insights
-
-## References
-
-[Human Resources Analytics Data Set](https://www.kaggle.com/ludobenistant/hr-analytics/data)
-```{r}
+```{r, echo=FALSE}
 multiplot <- function(..., plotlist = NULL, file, cols = 1, layout = NULL) {
   require(grid)
 
@@ -99,68 +28,76 @@ for (i in 1:numPlots) {
  }
 ```
 
+# Explanatory Data Analysis on HR Data
+
 ## Preparation
-We start by loading required libraries. 
-```{r}
-#getwd()
-
-
+We start by loading required libraries for this study. 
+```{r, message=FALSE}
 library('tidyverse')
-library("dplyr")
 library("ggplot2")
-
 ```
-Then we read dataset from csv file and have a quick look at the data. 
 
-# Read Data
+
+### Loading the Data
+Then we read dataset from csv file and had a quick look at its form. 
 ```{r}
 d=read.csv("HR_comma_sep.csv")
 d<- d %>% rename("departments" = "sales")
 glimpse(d)
 
 ```
+As you can see we have 14999 observations for job satisfaction level, latest evaluation (yearly), number of projects worked on, average monthly hours, time spend in the company (in years), work accident (within the past 2 years), promotion within the past 5 years, department and salary. All of them are numeric values except last two columns.
 
-As you can see we have nearly 15000 observations for job satisfaction, ...
 
 ```{r}
 summary(d)
 ```
+On average, the employees are 64% satisfied with their jobs; they have mean performance score of 0.71 (out of 1); an ordinary employee worked roughly on 3 - 4 different projects per year; it takes them 201.1 hours to complete their jobs per month; an avarage employee worked almost 3.5 years in the company (min = 2, max = 10); attrition rate is 23.81%; unfortunately only 2.1% of employees were promoted in the last 5 years. 8.24% of the employees are highly paid, 48.78% is lowly paid, 42.98% gets medium wage.
 
 Having known all the column names and their related statistics, we wanted to visualize the distribution of the numerical ones, just the get better understanding for further interpretations. For this reason we employed histogram plots. Notice that bin size is chosen with respect to range of the data.
 
 ```{r}
 p1 <- ggplot(subset(d ), aes(x=d$satisfaction_level, colour=d$satisfaction_level)) +
   geom_histogram(binwidth = 0.05,color = 'black', fill = '#099DD9') +
-  ggtitle("Satisfaction Level")
+  ggtitle("Satisfaction Level") +
+  labs(x="Job Satisfaction Score", y="Employee Count")
 
 p2 <- ggplot(subset(d ), aes(x=d$last_evaluation, colour=d$last_evaluation)) +
   geom_histogram(binwidth = 0.05,color = 'black', fill = '#FF8C00') +
-  ggtitle("Last Evaluation")
+  ggtitle("Last Evaluation") +
+  labs(x="Performance Score", y="Employee Count")
 
 p3 <- ggplot(subset(d ), aes(x=d$number_project, colour=d$number_project)) +
   geom_histogram(binwidth = 1,color = 'black', fill = '#9932CC') +
-  ggtitle("Number Of Projects")
+  ggtitle("Yearly Projects") +
+  labs(x="Number of Projects", y="Employee Count")
 
 p4 <- ggplot(subset(d ), aes(x=d$average_montly_hours, colour=d$average_montly_hours)) +
   geom_histogram(binwidth = 10,color = 'black', fill = '#808000') +
-  ggtitle("Average Monthly Hours")
+  ggtitle("Average Monthly Hours")+
+  labs(x="Monthly Hours", y="Employee Count")
+  
 
 p5 <- ggplot(subset(d ), aes(x=d$time_spend_company, colour=d$time_spend_company)) +
   geom_histogram(binwidth = 0.5,color = 'black', fill = '#9932CC') +
-  ggtitle("Time Spend Company")
+  ggtitle("Time Spent in the Company") +
+  labs(x="Time (Years)", y="Employee Count")
 
 p6 <- ggplot(subset(d ), aes(x=d$Work_accident, colour=d$Work_accident)) +
-  geom_histogram(binwidth = 0.8,color = 'black', fill = '#9932CC') +
-  ggtitle("Work Accident")
+  geom_bar(color = 'black', fill = '#9932CC') +
+  ggtitle("Work Accidents") +
+  labs(x="Accident Count", y="Employee Count")
 
 p7 <- ggplot(subset(d ), aes(x=d$left, colour=d$left)) +
-  geom_histogram(binwidth = 1,color = 'black', fill = '#2E8B57') +
-  ggtitle("Left")
+  geom_bar(color = 'black', fill = '#2E8B57') +
+  ggtitle("Employees Left") +
+  labs(x="Left Count", y="Employee Count")
 
 
 p8 <- ggplot(subset(d ), aes(x=d$promotion_last_5years, colour=d$promotion_last_5years)) +
-  geom_histogram(binwidth = 0.8,color = 'black', fill = '#00BFFF') +
-  ggtitle("Promotion (Last 5 Years)")
+  geom_bar(color = 'black', fill = '#00BFFF') +
+  ggtitle("Promotion in Last 5 Years") +
+  labs(x="Promotion Count", y="Employee Count")
 
 
 multiplot(p1,p2,p3,p4,p5,p6,p7,p8,cols=4)
@@ -193,9 +130,9 @@ According to above histograms, we found that; there was nearly no promoted emplo
 Now, let's look at the categorical variables, salary and department name. We wanted to compare left and none-left employee counts by departments and salary categories. When salary category does not give much insight about the characteristics of left people, we found that the 3 departments have considerably higher number of people left. These departments are sales, technical and support.
 ```{r}
 
-p9 <- ggplot(d, aes(x=d$departments,fill=as.character(d$left) ))
-      +theme(axis.text.x = element_text(angle = 60, hjust=1))+
-      geom_bar()
+p9 <- ggplot(d, aes(x=d$departments,fill=as.character(d$left) ))+
+  theme(axis.text.x = element_text(angle = 60, hjust=1))+
+  geom_bar()
 
 p10 <- ggplot(d, aes(x=d$salary,fill=as.character(d$left) ))+
       geom_bar()
@@ -226,7 +163,7 @@ department_left_rate
 
 ggplot(department_left_rate, aes(x=department_left_rate$departments,y=department_left_rate$freq ))+
       theme(axis.text.x = element_text(angle = 60, hjust=1))+
-      geom_bar()
+      geom_bar(stat = "identity")
 
 ```
 
