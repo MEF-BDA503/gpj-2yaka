@@ -1,8 +1,6 @@
 encoding: UTF-8
 ## 2Yaka's Progress Journal
 
-### Nov 7
-+ [Here](PeerReview.html) you can find our review of datING's project proposal.
 
 ### Oct 28
 
@@ -11,3 +9,8 @@ encoding: UTF-8
 ### Oct 29
 
 + [Here](Group_Project2Yaka.html) is our Group Project Proposal. 
+
+
+### Nov 7
+
++ [Here](PeerReview.html) you can find our review of datING's project proposal.
