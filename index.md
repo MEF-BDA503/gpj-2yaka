@@ -1,6 +1,9 @@
 encoding: UTF-8
 ## 2Yaka's Progress Journal
 
+### Nov 7
++ [Here](PeerReview.html) you can find our review of datING's project proposal.
+
 ### Oct 28
 
 + [Here](caseStudy.html) you can find our preliminary work on OSYM 2017 case study.

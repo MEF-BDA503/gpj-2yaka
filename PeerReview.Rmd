@@ -1,0 +1,39 @@
+---
+title: "Proposal Review"
+author: "2Yaka"
+date: "November 7th, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Peer Review
+
+* Group name: [datING](https://mef-bda503.github.io/gpj-datING_/)
+* Reviewee group name: [2Yaka](https://mef-bda503.github.io/gpj-2yaka/)
+
+# Data Description
+
+Data that is used by group datING is from an open-source database of terrorist attacks worldwide between years 1970 and 2016. The data includes information about more than 170000 terrorist attacks with at least 45 variables for each event in 205 countries. Activities that are close to present include over 120 variables.
+
+# Data Appropriateness
+
+Global Terrorism Data is a good dataset to work with and we found it very interesting. The dataset is neither small nor very big, as it must be. They have a proper tentative plan. Some columns are required to be cleared as they have N/A values.  It would be tidier if they reshaped the data.
+
+This project focuses on a subset of this database related with Turkey which contains more than 4000 rows, 25 variables and more than 3 categorical variables. These features comply with minimum observation, variable and categorical variable limits.
+
+# Project Flow
+
+In objectives part of the proposal, main aim of the project is clearly stated. A general view on what will be searched is also provided. But there is not a description about the steps of analysis that will take place. It is not easy to follow what will come next in the flow of the project.
+
+In abstract part of the project, an informative content is given including definition of terrorism. A minor critic can be given to the formation of the second sentence. Shorter sentences could be preferred for more comfortable reading. The authors claim that there is a link between attacks and interior reasons. It would be better if this claim is supported by literature reference or the authors could also prove it through data analysis throughout the project. Indonesia is chosen as a comparison partner because of its economic size and mostly Muslim population. However, generally Turkish Muslims experience Sunni Islam while Indonesian Muslims mostly follow stricter Shafi school. Thus, assuming these two cultures are alike, can be misleading.
+In the initial data analysis part of the project, setup information about data analysis and recreation is not given. To create reproducible results for an exploratory data analysis, the steps should be given to download and load the source data. Besides, no detail is given about why these steps are chosen during analysis and what results were expected and found. In addition to that, whether the data requires cleaning and details about cleaning procedures are required to provide with a better insight to project reviewers.
+
+# Suggestions
+
+*	In the comparative part of the analysis, we think that comparing Turkey with other terrorist targeted countries or areas such as Europe or Near East/Middle East Countries and global trends would be interesting. 
+*	We suggest them to check attacks according to terrorist groups and their aims for attack and results.
+*	Furthermore, Turkish Terrorist Attacks data from Turkish official data providers can be used to make comparisons about consistency of the data. 
+*	Comparing the orders of countries by the highest number of terrorist attacks at different time periods can also disclose hidden insights in the data.
