@@ -1,4 +1,3 @@
-encoding: UTF-8
 ## 2Yaka's Progress Journal
 
 
