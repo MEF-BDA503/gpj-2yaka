@@ -15,4 +15,4 @@
 
 ### Nov 18
 
-+ [Here](Group_Project2Yaka.Rmd) you can find our preliminary analysis. We will be updating this, frequently.
++ [Here](Group_Project2Yaka.html) you can find our preliminary analysis. We will be updating this, frequently.
