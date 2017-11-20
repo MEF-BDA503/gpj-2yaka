@@ -48,6 +48,12 @@ glimpse(d)
 ```
 As you can see we have 14999 observations for job satisfaction level, latest evaluation (yearly), number of projects worked on, average monthly hours, time spend in the company (in years), work accident (within the past 2 years), promotion within the past 5 years, department and salary. All of them are numeric values except last two columns.
 
+We also checked whether is there any NA or NaN values.
+```{r}
+which(is.na.data.frame(d))
+```
+Since there aren't any NA/NaN values, no need to omit or complete them. Thus we proceed summarizing the data.
+
 
 ```{r}
 summary(d)
@@ -103,19 +109,20 @@ p8 <- ggplot(subset(d ), aes(x=d$promotion_last_5years, colour=d$promotion_last_
 multiplot(p1,p2,p3,p4,p5,p6,p7,p8,cols=4)
 ```
 
-According to above histograms, we found that; there was nearly no promoted employee in the last five years. Bear in mind that the work accident data belongs to last two years and frequency of accidents is low but not zero. Monthly time spent in the company and number of projects which each employee works on both have positively skewed distributions.
+According to above histograms, we found that; there was nearly no promoted employee in the last five years. Bear in mind that the work accident data belongs to last two years and frequency of accidents is low but not zero. Monthly time spent in the company and number of projects which each employee works on both have positively skewed distributions. So, instead of mean, median value must be considered. A common employee works 4 project per year, spending 200 hours per month.
 
-```{r}
-
-# l <- list()
-# 
-# for (colNames in names(d)) { 
-#    l <- ggplot(subset(d ), aes(x=d$colNames, colour=d$colNames)) +
-#   geom_histogram(binwidth = 0.05,color = 'black', fill = '#099DD9') +
-#   ggtitle(colNames)
-#    
-#     index = index +1
-# }
+```{r, echo=FALSE, eval=FALSE}
+pltList <- list()
+name <- names(d)
+index = 1
+for (colName in names(d)) { 
+    pltList[[index]] <- ggplot(d$colName,colour=d$colName) +
+    geom_histogram(binwidth = 0.5,color = 'black', fill = '#9932CC') +
+    ggtitle(colName) +
+    labs(x= name[index], y="Employee Count")
+    index = index + 1
+}
+multiplot(plotlist = pltList,cols = 2)
 
 ```
 
@@ -126,32 +133,18 @@ According to above histograms, we found that; there was nearly no promoted emplo
 #   ggtitle("Last Evaluation") )
 # }
 ```
+Let's have a look at departmentwise job satisfaction level of the employees.
 
-Now, let's look at the categorical variables, salary and department name. We wanted to compare left and none-left employee counts by departments and salary categories. When salary category does not give much insight about the characteristics of left people, we found that the 3 departments have considerably higher number of people left. These departments are sales, technical and support.
 ```{r}
-
-p9 <- ggplot(d, aes(x=d$departments,fill=as.character(d$left) ))+
+ dep_satis <- d %>%
+  group_by(departments) %>%
+  summarise (Satisfaction =mean(satisfaction_level))
+  ggplot(data=dep_satis, aes(x=departments, y=Satisfaction)) +
   theme(axis.text.x = element_text(angle = 60, hjust=1))+
-  geom_bar()
-
-p10 <- ggplot(d, aes(x=d$salary,fill=as.character(d$left) ))+
-      geom_bar()
-#ggtitle("Average bill for 2 people")
-
-multiplot(p9,p10,cols=2)
-
-
+  geom_bar(stat="identity", position=position_dodge())
 ```
 
-
-```{r}
-
- ggplot(data=d, aes(x=departments, y=satisfaction_level)) +
- geom_bar(stat="identity", position=position_dodge())
-
-# ggplot(d, aes(x=salary, y=satisfaction_level)) +
-#   geom_point(size=2, shape=23)
-```
+It appears that the level of satisfaction is pretty much the same for all the departments except for some unhappy folks in the accounting department. While rest of the departments average satisfaction value is around 60% (which comply with overall satisfaction rate of 61.28%), accounting department's mean is below the company's mean. May be we should focus to that department seperately.
 ```{r}
 department_left_rate<-d %>%
   group_by(departments) %>%
@@ -165,5 +158,21 @@ ggplot(department_left_rate, aes(x=department_left_rate$departments,y=department
       theme(axis.text.x = element_text(angle = 60, hjust=1))+
       geom_bar(stat = "identity")
 
+```
+
+Notice that altough job satisfaction level is uniformly distributed among the departments, the left rate varies abrubtly, having a peak in the sales department. So there must be other factors that effect employee's decision to sign-out, such as salary.
+
+Now, let's look at the categorical variables, salary and department name. We wanted to compare left and remained employee counts by departments and salary categories. When salary category does not give much insight about the characteristics of left people, we found that the 3 departments have considerably higher number of people left. These departments are sales, technical and support.
+```{r}
+
+p9 <- ggplot(d, aes(x=d$departments,fill=as.character(d$left) ))+
+  theme(axis.text.x = element_text(angle = 60, hjust=1))+
+  geom_bar()
+
+p10 <- ggplot(d, aes(x=d$salary,fill=as.character(d$left) ))+
+      geom_bar()
+#ggtitle("Average bill for 2 people")
+
+multiplot(p9,p10,cols=2)
 ```
 
