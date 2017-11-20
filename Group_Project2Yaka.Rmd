@@ -92,18 +92,21 @@ p5 <- ggplot(subset(d ), aes(x=d$time_spend_company, colour=d$time_spend_company
 p6 <- ggplot(subset(d ), aes(x=d$Work_accident, colour=d$Work_accident)) +
   geom_bar(color = 'black', fill = '#9932CC') +
   ggtitle("Work Accidents") +
-  labs(x="Accident Count", y="Employee Count")
+  labs(x="Accident Count", y="Employee Count") +
+  scale_x_continuous(breaks = c(0,1,1))
 
 p7 <- ggplot(subset(d ), aes(x=d$left, colour=d$left)) +
   geom_bar(color = 'black', fill = '#2E8B57') +
   ggtitle("Employees Left") +
-  labs(x="Left Count", y="Employee Count")
+  labs(x="Left Count", y="Employee Count") +
+  scale_x_continuous(breaks = c(0,1,1))
 
 
 p8 <- ggplot(subset(d ), aes(x=d$promotion_last_5years, colour=d$promotion_last_5years)) +
+  scale_x_continuous(breaks = c(0,1,1)) +
   geom_bar(color = 'black', fill = '#00BFFF') +
-  ggtitle("Promotion in Last 5 Years") +
-  labs(x="Promotion Count", y="Employee Count")
+  ggtitle("Promotion in Last 5 Years") 
+  labs(x="Promotion Count", y="Employee Count") 
 
 
 multiplot(p1,p2,p3,p4,p5,p6,p7,p8,cols=4)
