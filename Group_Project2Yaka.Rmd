@@ -112,7 +112,7 @@ p8 <- ggplot(subset(d ), aes(x=d$promotion_last_5years, colour=d$promotion_last_
 multiplot(p1,p2,p3,p4,p5,p6,p7,p8,cols=4)
 ```
 
-According to above histograms, we found that; there was nearly no promoted employee in the last five years. Bear in mind that the work accident data belongs to last two years and frequency of accidents is low but not zero. Monthly time spent in the company and number of projects which each employee works on both have positively skewed distributions. So, instead of mean, median value must be considered. A common employee works 4 project per year, spending 200 hours per month.
+According to above histograms, we found that; there was nearly no promoted employee in the last five years. Bear in mind that the work accident data belongs to last two years and frequency of accidents is low but not zero. Monthly time spent in the company and number of projects which each employee works on both have positively skewed distributions. So, instead of mean, median value must be considered. Thus, a common employee works 4 projects per year, spending 200 hours per month.
 
 ```{r, echo=FALSE, eval=FALSE}
 pltList <- list()
@@ -147,34 +147,27 @@ Let's have a look at departmentwise job satisfaction level of the employees.
   geom_bar(stat="identity", position=position_dodge())
 ```
 
-It appears that the level of satisfaction is pretty much the same for all the departments except for some unhappy folks in the accounting department. While rest of the departments average satisfaction value is around 60% (which comply with overall satisfaction rate of 61.28%), accounting department's mean is below the company's mean. May be we should focus to that department seperately.
+It appears that the level of satisfaction is pretty much the same for all the departments except for some unhappy folks in the accounting department. While rest of the departments average satisfaction value is around 60% (which complies with overall satisfaction rate of 61.28%), accounting department's mean is below the company's mean. May be we should focus on that department seperately.
 ```{r}
-department_left_rate<-d %>%
-  group_by(departments) %>%
-  summarise (n = n()) %>%
-  mutate(freq = n / sum(n))
+depLeftSatis <- d %>% group_by(departments) %>% summarise(Total =n(),LeftCount = sum(left), Satisfaction = mean(satisfaction_level) ) %>% mutate(LeftRate = LeftCount/Total)
 
-department_left_rate
-
-
-ggplot(department_left_rate, aes(x=department_left_rate$departments,y=department_left_rate$freq ))+
-      theme(axis.text.x = element_text(angle = 60, hjust=1))+
-      geom_bar(stat = "identity")
-
+ggplot(data = depLeftSatis, aes( x = depLeftSatis$departments, y = depLeftSatis$LeftRate)) +
+    theme(axis.text.x = element_text(angle = 60, hjust=1))+
+    geom_col()+labs(x= "Departments", y="Left Rate")
+  
 ```
 
-Notice that altough job satisfaction level is uniformly distributed among the departments, the left rate varies abrubtly, having a peak in the sales department. So there must be other factors that effect employee's decision to sign-out, such as salary.
+Notice that altough job satisfaction level is uniformly distributed among the departments, the left rate varies abrubtly, maximized at the HR department. So there must be other factors that effect employee's decision to sign-out, such as salary.
 
 Now, let's look at the categorical variables, salary and department name. We wanted to compare left and remained employee counts by departments and salary categories. When salary category does not give much insight about the characteristics of left people, we found that the 3 departments have considerably higher number of people left. These departments are sales, technical and support.
 ```{r}
 
 p9 <- ggplot(d, aes(x=d$departments,fill=as.character(d$left) ))+
   theme(axis.text.x = element_text(angle = 60, hjust=1))+
-  geom_bar()
+  geom_bar() 
 
 p10 <- ggplot(d, aes(x=d$salary,fill=as.character(d$left) ))+
       geom_bar()
-#ggtitle("Average bill for 2 people")
 
 multiplot(p9,p10,cols=2)
 ```
