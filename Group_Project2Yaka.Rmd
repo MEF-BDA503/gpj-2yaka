@@ -114,20 +114,20 @@ multiplot(p1,p2,p3,p4,p5,p6,p7,p8,cols=4)
 
 According to above histograms, we found that; there was nearly no promoted employee in the last five years. Bear in mind that the work accident data belongs to last two years and frequency of accidents is low but not zero. Monthly time spent in the company and number of projects which each employee works on both have positively skewed distributions. So, instead of mean, median value must be considered. Thus, a common employee works 4 projects per year, spending 200 hours per month.
 
-```{r, echo=FALSE, eval=FALSE}
-pltList <- list()
-name <- names(d)
-index = 1
-for (colName in names(d)) { 
-    pltList[[index]] <- ggplot(d$colName,colour=d$colName) +
-    geom_histogram(binwidth = 0.5,color = 'black', fill = '#9932CC') +
-    ggtitle(colName) +
-    labs(x= name[index], y="Employee Count")
-    index = index + 1
-}
-multiplot(plotlist = pltList,cols = 2)
+#```{r, echo=FALSE, eval=FALSE}
+#pltList <- list()
+#name <- names(d)
+#index = 1
+#for (colName in names(d)) { 
+#    # pltList[[index]] <- ggplot(d$colName,colour=d$colName) +
+#    geom_histogram(binwidth = 0.5,color = 'black', fill = '#9932CC') +
+#    ggtitle(colName) +
+#    labs(x= name[index], y="Employee Count")
+#    index = index + 1
+#}
+#multiplot(plotlist = pltList,cols = 2)
 
-```
+#```
 
 ```{r}
 # for (i in names(d)) { 
@@ -164,11 +164,17 @@ Now, let's look at the categorical variables, salary and department name. We wan
 
 p9 <- ggplot(d, aes(x=d$departments,fill=as.character(d$left) ))+
   theme(axis.text.x = element_text(angle = 60, hjust=1))+
-  geom_bar() 
+  geom_bar() +
+  labs(x="Departments", y="Employee Count")
 
 p10 <- ggplot(d, aes(x=d$salary,fill=as.character(d$left) ))+
-      geom_bar()
+      geom_bar() +
+      labs(x="Salary", y ="Employee Count")
 
 multiplot(p9,p10,cols=2)
+```
+Let's see correlation matrix
+```{r}
+cor(d[,1:8])
 ```
 
