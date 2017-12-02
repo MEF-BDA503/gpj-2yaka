@@ -279,6 +279,23 @@ ggplot(d, aes(d$satisfaction_level,d$time_spend_company)) +
 
 From the graph above, it is seen that the motivated last group leaves the company between three and six years. May be they did not the promotion or salary increase they expected. People who passes six years thereshold, does not tend to leave the company later.
 
+<!-- ## K-Means Clustering -->
+<!-- ```{r} -->
+
+<!-- #Get selected columns from data set -->
+<!-- d2 <- d %>% select(satisfaction_level,average_montly_hours) -->
+
+<!-- set.seed(35) -->
+
+<!-- #apply k-means clustering -->
+<!-- clusters<-kmeans(d2,centers=4) -->
+
+<!-- #Get the clusters -->
+<!-- mds_clusters<-data.frame(genre=names(genre_cluster$cluster),cluster_mds=genre_cluster$cluster) %>% arrange(cluster_mds,genre) -->
+<!-- mds_clusters -->
+
+<!-- ``` -->
+
 ```{r}
 
 CorrMat <- round(cor(dLeft[,0:7]),3)
@@ -297,12 +314,14 @@ Correlogram created from numerical values in our dataset shows that Average Mont
 
 ## Principal Component Analysis
 
-Now, we are going to use this correlation matrix to make principal component analysis.
+Now, we are going to use this correlation matrix to make principal component analysis. Before that we need to transform salaries to numeric values to see their effect on left rate.
 ```{r}
-survey_pca <-princomp(as.matrix(dLeft[,1:7],cor=T))
+names(dLeft)
+dLeft_pca <- dLeft  %>% mutate(salary_Num = ifelse(salary == "low", 0, ifelse(salary == "medium", 1, 2))) %>% select(-salary,-departments)
+survey_pca <-princomp(as.matrix(dLeft_pca[,1:8],cor=T))
 summary(survey_pca,loadings=TRUE)
 ```
-
+Cumulative variance plot is as below: 
 
 ```{r}
 
@@ -318,10 +337,4 @@ ggplot(data.frame(pc=1:5,cum_var=c(0.9996162, 0.9998254162, 0.9999774670, 0.9999
 
 The first component explains %99 of the variance and it is exactly average mounthly hours! We are also surprised with this result as you are. We were expecting to see salary too as a negative factor effecting attirition rate. We are going build our prediction model just on this factor to see future run away employees.
 
-```{r}
-
-
-
-
-```
 
