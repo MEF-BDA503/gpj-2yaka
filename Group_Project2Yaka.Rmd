@@ -35,6 +35,7 @@ We start by loading required libraries for this study.
 ```{r, message=FALSE}
 library('tidyverse')
 library("ggplot2")
+library("ggcorrplot")
 ```
 
 
@@ -149,14 +150,21 @@ Let's have a look at departmentwise job satisfaction level of the employees.
 
 It appears that the level of satisfaction is pretty much the same for all the departments except for some unhappy folks in the accounting department. While rest of the departments average satisfaction value is around 60% (which complies with overall satisfaction rate of 61.28%), accounting department's mean is below the company's mean. May be we should focus on that department seperately.
 ```{r}
-depLeftSatis <- d %>% group_by(departments) %>% summarise(Total =n(),LeftCount = sum(left), Satisfaction = mean(satisfaction_level) ) %>% mutate(LeftRate = LeftCount/Total)
+depLeftSatis <- d %>% group_by(departments) %>% summarise(Total =n(),LeftCount = sum(left), Satisfaction = mean(satisfaction_level) ) %>% mutate(LeftRate = LeftCount/Total) 
 
-ggplot(data = depLeftSatis, aes( x = depLeftSatis$departments, y = depLeftSatis$LeftRate)) +
+ggplot(data = depLeftSatis, aes( x = reorder(departments, -LeftRate), y = LeftRate)) +
     theme(axis.text.x = element_text(angle = 60, hjust=1))+
     geom_col()+labs(x= "Departments", y="Left Rate")
   
 ```
+```{r}
+depLeftSatis <- d %>% group_by(departments,salary) %>% summarise(Total =n(),LeftCount = sum(left), Satisfaction = mean(satisfaction_level) ) %>% mutate(LeftRate = LeftCount/Total)
 
+ggplot(data = depLeftSatis, aes( x = departments, y = LeftRate, fill=salary)) +
+    theme(axis.text.x = element_text(angle = 60, hjust=1)) +
+    geom_bar(stat="identity",position = "stack")+labs(x= "Departments", y="Left Rate")
+  
+```
 Notice that altough job satisfaction level is uniformly distributed among the departments, the left rate varies abrubtly, maximized at the HR department. So there must be other factors that effect employee's decision to sign-out, such as salary.
 
 Now, let's look at the categorical variables, salary and department name. We wanted to compare left and remained employee counts by departments and salary categories. When salary category does not give much insight about the characteristics of left people, we found that the 3 departments have considerably higher number of people left. These departments are sales, technical and support.
@@ -169,12 +177,35 @@ p9 <- ggplot(d, aes(x=d$departments,fill=as.character(d$left) ))+
 
 p10 <- ggplot(d, aes(x=d$salary,fill=as.character(d$left) ))+
       geom_bar() +
-      labs(x="Salary", y ="Employee Count")
+      labs(x="Salary", y ="Employee Count",fill="aa")
 
 multiplot(p9,p10,cols=2)
 ```
-Let's see correlation matrix
+Let's see correlation matrix for whole company
 ```{r}
-cor(d[,1:8])
+CorrMat <- round(cor(d[,0:8]),3)
+ggcorrplot(CorrMat, hc.order = TRUE, 
+           #type = "lower", 
+           lab = TRUE, 
+           lab_size = 3, 
+           method="circle", 
+           colors = c("tomato2", "white", "springgreen3"), 
+           title="Correlogram of Numeric Values", 
+           ggtheme=theme_bw)
+```
+Let's see correlation matrix for people who quit, already.
+```{r}
+dLeft <- d %>% filter(left==1) %>% select(-left)
+
+CorrMat <- round(cor(dLeft[,0:7]),3)
+ggcorrplot(CorrMat, hc.order = TRUE, 
+           #type = "lower", 
+           lab = TRUE, 
+           lab_size = 3, 
+           method="circle", 
+           colors = c("tomato2", "white", "springgreen3"), 
+           title="Correlogram of Numeric Values", 
+           ggtheme=theme_bw)
+```
 ```
 
