@@ -13,6 +13,6 @@
 
 + [Here](PeerReview.html) you can find our review of datING's project proposal.
 
-### Nov 18
+### Nov 18 & Dec 3
 
 + [Here](Group_Project2Yaka.html) you can find our preliminary analysis. We will be updating this, frequently.
