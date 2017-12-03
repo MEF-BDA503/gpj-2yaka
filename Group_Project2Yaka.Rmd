@@ -36,6 +36,12 @@ We start by loading required libraries for this study.
 library('tidyverse')
 library("ggplot2")
 library("ggcorrplot")
+
+# install 'ggalt' pkg
+  devtools::install_github("hrbrmstr/ggalt")
+# options(scipen = 999)
+
+ library('ggalt')
 ```
 
 
@@ -49,7 +55,7 @@ glimpse(d)
 ```
 As you can see we have 14999 observations for job satisfaction level, latest evaluation (yearly), number of projects worked on, average monthly hours, time spend in the company (in years), work accident (within the past 2 years), promotion within the past 5 years, department and salary. All of them are numeric values except last two columns.
 
-We also checked whether is there any NA or NaN values.
+We also checked whether there is any NA or NaN values.
 ```{r}
 which(is.na.data.frame(d))
 ```
@@ -61,7 +67,7 @@ summary(d)
 ```
 On average, the employees are 64% satisfied with their jobs; they have mean performance score of 0.71 (out of 1); an ordinary employee worked roughly on 3 - 4 different projects per year; it takes them 201.1 hours to complete their jobs per month; an avarage employee worked almost 3.5 years in the company (min = 2, max = 10); attrition rate is 23.81%; unfortunately only 2.1% of employees were promoted in the last 5 years. 8.24% of the employees are highly paid, 48.78% is lowly paid, 42.98% gets medium wage.
 
-Having known all the column names and their related statistics, we wanted to visualize the distribution of the numerical ones, just the get better understanding for further interpretations. For this reason we employed histogram plots. Notice that bin size is chosen with respect to range of the data.
+Having known all the column names and their related statistics, we wanted to visualize the distribution of the numerical ones, just to get better understanding for further interpretations. For this reason we employed histogram plots. Notice that bin sizes are adapted with respect to varying ranges of the data.
 
 ```{r}
 p1 <- ggplot(subset(d ), aes(x=satisfaction_level, colour=satisfaction_level)) +
@@ -210,7 +216,7 @@ ggcorrplot(CorrMat, hc.order = TRUE,
            ggtheme=theme_bw)
 ```
 
-May be it is better to focus on the people who quit, already. We look at the correlation matrix of those to understand factors affecting their final decision to quit.
+Maybe it is better to focus on the people who quit, already. We look at the correlation matrix of those to understand factors affecting their final decision to quit.
 
 ```{r}
 dLeft <- d %>% filter(left==1) %>% select(-left)
@@ -224,32 +230,38 @@ dLeft <- d %>% filter(left==1) %>% select(-left)
 We pairwise plotted job satisfaction level versus average montly hours and also satisfaction level versus time spent in the company. Meanwhile, we also highlighted employees left the company. 
 
 ```{r}
-# install 'ggalt' pkg
-#  devtools::install_github("hrbrmstr/ggalt")
-# options(scipen = 999)
-# library(ggplot2)
-# library(ggalt)
+
 #Define three main groups which left the company 
-d_leftgroups <- d[d$average_montly_hours > 240 & 
-                            d$average_montly_hours <= 315 & 
-                            d$satisfaction_level > 0.08 & 
-                            d$satisfaction_level < 0.12, ]
+d$left <- factor(d$left, labels=c("No", "Yes"))
 
+gg <- ggplot(d,aes(satisfaction_level,average_montly_hours))
 
-ggplot(d, aes(d$satisfaction_level,d$average_montly_hours)) +
-  geom_point(aes(col=d$left),size=1.5 ) +
-  # geom_encircle(aes(x=d$satisfaction_level, y=d$average_montly_hours),
-  #               data=d_leftgroups,
-  #               color="red",
-  #               size=2,
-  #               expand=0.08) +   # encircle
-  # 
- scale_x_continuous(breaks= seq(0.08,1.005,by=0.08), limits = c(0.08,1.005)) +
-                    
-  scale_y_continuous(breaks =  seq(90,315,by=10), limits = c(90,315))+
-   labs(x="Satisfaction Level",
-       y="Average Monthly Hours", 
-       title="Satisfaction Level vs. Avg. Monthly Hours")
+gg <- gg +geom_point(aes(col=factor(d$left)))
+
+gg + geom_encircle(data=subset(d, 
+                               satisfaction_level>=0.05 & 
+                                 satisfaction_level<0.12 & 
+                                 average_montly_hours>240 & 
+                                 average_montly_hours<=310), colour="blue",expand=0.05,spread=0.02,size=2) +
+  geom_encircle(data=subset(d, 
+                               satisfaction_level>=0.35 & 
+                                 satisfaction_level<0.47 & 
+                                 average_montly_hours>122 & 
+                                 average_montly_hours<164), colour="blue", expand=0,spread=0.02,size=2) +
+    geom_encircle(data=subset(d, 
+                               satisfaction_level>=0.47 & 
+                                 satisfaction_level<=1 & 
+                                 average_montly_hours>129 & 
+                                 average_montly_hours<279), colour="green", expand=0, spread=0.02,size=2) +
+      geom_encircle(data=subset(d, 
+                               satisfaction_level>=0.715 & 
+                                 satisfaction_level<=0.9 & 
+                                 average_montly_hours>215 & 
+                                 average_montly_hours<278), colour="blue", expand=0, spread=0.02,size=2) +
+
+   scale_x_continuous(breaks=seq(0.08, 1, 0.08), limits = c(0.08, 1)) + 
+  scale_y_continuous(breaks=seq(100, 315, 30), limits = c(100, 315)) +
+  labs(x="Satisfaction Level",y="Avg. Monthly Hours", title="Satisfaction Level vs. Average Monthly Hours",col="Left Work") 
 ```
 
 From the satisfaction vs. monthly hours plot, three seperate clusters are clearly seen with following properties:
@@ -260,25 +272,35 @@ From the satisfaction vs. monthly hours plot, three seperate clusters are clearl
 
 It is no surprise that employees belonging to the first group quits the job. Furthermore, it would not be wrong to call the second group as **unmotivated** and the last group as **motivated**. It is very surprising to see motivated employees with such a high satisfaction level (>0.8) and long working hours. Those ones also must be the ones who works on more projects than the average, since average monthly hours highly correlates with number of projects.
 
+
 ```{r}
 
+gg <- ggplot(d,aes(satisfaction_level,time_spend_company))
 
-ggplot(d, aes(d$satisfaction_level,d$time_spend_company)) +
-  geom_point(aes(col=d$left),size=1.5 ) +
-  # geom_encircle(aes(x=d$satisfaction_level, y=d$average_montly_hours),
-  #               data=d_leftgroups,
-  #               color="red",
-  #               size=2,
-  #               expand=0.08) +   # encircle
-  # 
- scale_x_continuous(breaks= seq(0.08,1.005,by=0.08), limits = c(0.08,1.005)) +
-                    
+gg <- gg +geom_point(aes(col=factor(d$left)))
+
+gg + geom_encircle(data=subset(d, 
+                               satisfaction_level>=0.72 & 
+                                 satisfaction_level<=0.92 & 
+                                 time_spend_company>4 & 
+                                 time_spend_company<6.02), colour="blue", expand=0.02,spread=0.02,size=2)+
+  geom_encircle(data=subset(d, 
+                               satisfaction_level>=0.36 & 
+                                 satisfaction_level<=0.47 & 
+                                 time_spend_company==3 ), colour="blue", expand=0.02,spread=0.02,size=2)+
+    geom_encircle(data=subset(d, 
+                               satisfaction_level>=0.08 & 
+                                 satisfaction_level<=0.12 & 
+                                 time_spend_company>=3 &
+                                time_spend_company<=5), colour="blue", expand=0.02,spread=0.02,size=2)+
+
+   scale_x_continuous(breaks=seq(0.08, 1, 0.08), limits = c(0.08, 1)) + 
   scale_y_continuous(breaks =  seq(0,10,by=2), limits = c(0,10))+
-   labs(x="Satisfaction Level", y="Time Spend Company", col="Left or Not", title="Satisfaction Level vs. Time Spent in the Company")
-
+  labs(x="Satisfaction Level",y="Time Spend In Company (Years)", title="Satisfaction Level vs. Time Spend In Company (Years)",col="Left Work") 
 ```
 
-From the graph above, it is seen that the motivated last group leaves the company between three and six years. May be they did not the promotion or salary increase they expected. People who passes six years thereshold, does not tend to leave the company later.
+
+From the graph above, it is seen that the motivated last group leaves the company between four and six years. May be they did not the promotion or salary increase they expected. People who passes six years thereshold, does not tend to leave the company later.
 
 <!-- ## K-Means Clustering -->
 <!-- ```{r} -->
@@ -338,5 +360,34 @@ ggplot(data.frame(pc=1:5,cum_var=c(0.9996162, 0.9998254162, 0.9999774670, 0.9999
 
 
 The first component explains %99 of the variance and it is exactly average mounthly hours! We are also surprised with this result as you are. We were expecting to see salary too as a negative factor effecting attirition rate. We are going build our prediction model just on this factor to see future run away employees.
+
+## K-Means Clustering
+
+We tried K-Means clustering to be able to group mass of people who left the company.
+
+
+```{r}
+
+#Filter to get the data from left people only
+dleft<- subset(d, left=='Yes') 
+dleft<- select(dleft,-left)
+
+
+#apply k-means with 4 clusters and 20 iterations
+set.seed(20)
+dleft_Cluster <- kmeans(dleft[, 1:7], 4, nstart = 20)
+
+dleft_Cluster
+
+```
+
+When we compare the values of 4 clusters with our previously defined groups in two graphs (Satisfaction Level vs. Avg. Monthly Hours, Satisfaction Level vs. Time Spend In Company), we found that there are similarities below:
+
++ Cluster 1 corresponds with Group 1 (Low satisfaction level (0.08 - 0.12) and long working hours (>240 hours))
++ Cluster 4 corresponds with Group 2 (Mediocre satisfaction level (0.36 - 0.45) and low working hours (120 - 160 hours))
+
+As there are not enough samples in Group 3, basic k-means clustering we applied was not successful enough to discriminate the third Group (High satisfaction level and relatively high working hours). We think that further filtering is needed before reapplying clustering methods to this data. 
+
+
 
 
