@@ -66,45 +66,45 @@ Having known all the column names and their related statistics, we wanted to vis
 ```{r}
 p1 <- ggplot(subset(d ), aes(x=satisfaction_level, colour=satisfaction_level)) +
   theme(plot.title = element_text(size=12)) +
-  geom_histogram(binwidth = 0.05,color = 'black', fill = '#099DD9') +
+  geom_histogram(binwidth = 0.05,color = 'black', fill = '#999999') +
   ggtitle("Satisfaction Level") +
   labs(x="Job Satis. Score", y="Employee Count", size = 8)
 
 p2 <- ggplot(subset(d ), aes(x=last_evaluation, colour=last_evaluation)) +
   theme(plot.title = element_text(size=12)) +
-  geom_histogram(binwidth = 0.05,color = 'black', fill = '#FF8C00') +
+  geom_histogram(binwidth = 0.05,color = 'black', fill = '#009E73') +
   ggtitle("Last Evaluation") +
   labs(x="Performance Score", y="Employee Count", size = 8)
 
 p3 <- ggplot(subset(d ), aes(x=number_project, colour=number_project)) +
    theme(plot.title = element_text(size=12)) +
-  geom_histogram(binwidth = 1,color = 'black', fill = '#9932CC') +
+  geom_histogram(binwidth = 1,color = 'black', fill = '#56B4E9') +
   ggtitle("Yearly Projects") +
   labs(x="Number of Projects", y="Employee Count", size = 8)
 
 p4 <- ggplot(subset(d ), aes(x=average_montly_hours, colour=average_montly_hours)) +
   theme(plot.title = element_text(size=12)) +
-  geom_histogram(binwidth = 10,color = 'black', fill = '#808000') +
+  geom_histogram(binwidth = 10,color = 'black', fill = '#E69F00') +
   ggtitle("Average Monthly Hours")+
   labs(x="Monthly Hours", y="Employee Count", size = 8)
   
 
 p5 <- ggplot(subset(d ), aes(x=time_spend_company, colour=time_spend_company)) +
   theme(plot.title = element_text(size=12)) +
-  geom_histogram(binwidth = 0.5,color = 'black', fill = '#9932CC') +
+  geom_histogram(binwidth = 0.5,color = 'black', fill = '#F0E442') +
   ggtitle("Time Spent in Company") +
   labs(x="Time (Years)", y="Employee Count", size = 8)
 
 p6 <- ggplot(subset(d ), aes(x=Work_accident, colour=Work_accident)) +
   theme(plot.title = element_text(size=12)) +
-  geom_bar(color = 'black', fill = '#9932CC') +
+  geom_bar(color = 'black', fill = '#0072B2') +
   ggtitle("Work Accidents") +
   labs(x="Accident Count", y="Employee Count", size = 8) +
   scale_x_continuous(breaks = c(0,1,1))
 
 p7 <- ggplot(subset(d ), aes(x=left, colour=left)) +
   theme(plot.title = element_text(size=12)) +
-  geom_bar(color = 'black', fill = '#2E8B57') +
+  geom_bar(color = 'black', fill = '#D55E00') +
   ggtitle("Employees Left") +
   labs(x="Left Count", y="Employee Count", size = 8) +
   scale_x_continuous(breaks = c(0,1,1))
@@ -113,7 +113,7 @@ p7 <- ggplot(subset(d ), aes(x=left, colour=left)) +
 p8 <- ggplot(subset(d), aes(x=promotion_last_5years, colour=promotion_last_5years)) +
   theme(plot.title = element_text(size=12)) +
   scale_x_continuous(breaks = c(0,1,1)) +
-  geom_bar(color = 'black', fill = '#00BFFF') +
+  geom_bar(color = 'black', fill = '#CC79A7') +
   ggtitle("Promotion in 5 Years") +
   labs(x="Promotion Count", y="Employee Count", size = 8) 
 
@@ -153,7 +153,7 @@ Let's have a look at departmentwise job satisfaction level of the employees.
   summarise (Satisfaction =mean(satisfaction_level))
   ggplot(data=dep_satis, aes(x=departments, y=Satisfaction)) +
   theme(axis.text.x = element_text(angle = 60, hjust=1))+
-  geom_bar(stat="identity", position=position_dodge())
+  geom_bar(stat="identity", position=position_dodge(), fill="#FF9999", colour="black")
 ```
 
 It appears that the level of satisfaction is pretty much the same for all the departments except for some unhappy folks in the accounting department. While rest of the departments average satisfaction value is around 60% (which complies with overall satisfaction rate of 61.28%), accounting department's mean is below the company's mean. May be we should focus on that department seperately.
@@ -251,6 +251,7 @@ ggplot(d, aes(d$satisfaction_level,d$average_montly_hours)) +
        y="Average Monthly Hours", 
        title="Satisfaction Level vs. Avg. Monthly Hours")
 ```
+
 From the satisfaction vs. monthly hours plot, three seperate clusters are clearly seen with following properties:
  
 + *Group 1:* Low satisfaction level and long working hours
