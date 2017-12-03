@@ -322,6 +322,7 @@ dLeft_pca <- dLeft  %>% mutate(salary_Num = ifelse(salary == "low", 0, ifelse(sa
 survey_pca <-princomp(as.matrix(dLeft_pca[,1:8],cor=T))
 summary(survey_pca,loadings=TRUE)
 ```
+
 Cumulative variance plot is as below: 
 
 ```{r}
