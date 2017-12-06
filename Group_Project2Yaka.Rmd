@@ -30,9 +30,6 @@ for (i in 1:numPlots) {
 
 # Explanatory Data Analysis on HR Data
 
-![](*C:\Users\merye\Desktop\human-resources.jpg)
-
-
 
 ## Preparation
 We start by loading required libraries for this study. 
