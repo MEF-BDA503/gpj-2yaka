@@ -2,13 +2,13 @@
 
 ## Group Members : 
 
-.[Cihan Tektunali](https://mef-bda503.github.io/pj-tektunalic/)
+1.[Cihan Tektunali](https://mef-bda503.github.io/pj-tektunalic/)
 
-.[Duygu Can](https://mef-bda503.github.io/pj-cand/)
+2.[Duygu Can](https://mef-bda503.github.io/pj-cand/)
 
-.[Meryem Kemerci](https://mef-bda503.github.io/pj-MeryemKemerci/)
+3.[Meryem Kemerci](https://mef-bda503.github.io/pj-MeryemKemerci/)
 
-.[Murat Donmez](https://mef-bda503.github.io/pj-muratdonmez/)
+4.[Murat Donmez](https://mef-bda503.github.io/pj-muratdonmez/)
 
 
 ### Oct 28
