@@ -30,6 +30,10 @@ for (i in 1:numPlots) {
 
 # Explanatory Data Analysis on HR Data
 
+![](*C:\Users\merye\Desktop\human-resources.jpg)
+
+
+
 ## Preparation
 We start by loading required libraries for this study. 
 ```{r, message=FALSE}
@@ -43,6 +47,55 @@ library("ggcorrplot")
 
  library('ggalt')
 ```
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+## Abstract
+
+The dataset we have choosen is about human resources. Our aim is to answer an interesting question of a company such as "*Why are our best and most experienced employees leaving prematurely?*" We will try to find an answer to this question by analyzing answers of the employees to the job satisfaction survey and their work related records. The dataset is formed by the Human Resources (HR) department after conducting a survey on their employees.
+
+
+## Data Description
+
+We used [Human Resources Analytics Data](https://www.kaggle.com/ludobenistant/hr-analytics/data) from [kaggle](https://www.kaggle.com). This HR data set is obtained from the results of a satisfaction survey the company has carried out on their employees in combination with other HR related records. It consists of 14999 rows and 10 columns. Each row is dedicated for a different employee. Out of 10, 8 columns are in numeric type, while the remaining 2 are in numeric values. Below you can find columns and their explanations, respectively.
+
+
+* **1st Column:** Satisfaction level 
+
+* **2nd Column:** Last evaluation score
+
+* **3rd Column:** Number of projects worked on (yearly basis)
+
+* **4th Column:** Average monthly working hours 
+
+* **5th Column:** Time spent in the company (in years)
+
+* **6th Column:** Whether they have had a work accident in the last 2 years 
+
+* **7th Column:** Whether they have had a promotion in the last 5 years 
+
+* **8th Column:** Departments
+
+* **9th Column:** Salary 
+
+* **10th Column:** Whether the employee has left 
+
+All the data collected is from last 5 years whereas accident data belongs to past 2 years. This HR database does not take into account the employees that have been fired, transferred or hired in the past year. Our objective is to make predictions about the probabilities that employees may leave their company and what to change to increase their satisfaction levels. We will try to give insights to make best employees more loyal.
+
+##Our tentative plan is as follows:
+
+1. Explore the dimensions of variables
+2. Clean the data if required
+3. Summarise the data and search for correlations wherever possible
+4. Visualize the filtered results
+5. Make conclusions and give insights
+
+
 
 
 ### Loading the Data
@@ -388,6 +441,8 @@ When we compare the values of 4 clusters with our previously defined groups in t
 
 As there are not enough samples in Group 3, basic k-means clustering we applied was not successful enough to discriminate the third Group (High satisfaction level and relatively high working hours). We think that further filtering is needed before reapplying clustering methods to this data. 
 
+## References
 
+[Human Resources Analytics Data Set](https://www.kaggle.com/ludobenistant/hr-analytics/data)
 
 

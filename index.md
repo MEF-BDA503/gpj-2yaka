@@ -1,5 +1,6 @@
 ## 2Yaka's Progress Journal
 
+
 ## Group Members : 
 
 1.[Cihan Tektunali](https://mef-bda503.github.io/pj-tektunalic/)
