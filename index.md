@@ -3,8 +3,11 @@
 ## Group Members : 
 
 .[Cihan Tektunali](https://mef-bda503.github.io/pj-tektunalic/)
+
 .[Duygu Can](https://mef-bda503.github.io/pj-cand/)
+
 .[Meryem Kemerci](https://mef-bda503.github.io/pj-MeryemKemerci/)
+
 .[Murat Donmez](https://mef-bda503.github.io/pj-muratdonmez/)
 
 
