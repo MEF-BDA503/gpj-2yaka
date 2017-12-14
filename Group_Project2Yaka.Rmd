@@ -31,25 +31,18 @@ for (i in 1:numPlots) {
 # Explanatory Data Analysis on HR Data
 
 
-## Preparation
+## Preparation 
 We start by loading required libraries for this study. 
-```{r, message=FALSE}
-#install.packages("ggplot2")
+```{r, message=FALSE,warning=FALSE}
 library('tidyverse')
 library("ggplot2")
 library("ggcorrplot")
 library(ggthemes)
 substitute(formattable::as.htmlwidget(expr))
 library(shiny)
-#install.packages("formattable")
 library(formattable)
 library(htmlwidgets)
-
-# install 'ggalt' pkg
-  devtools::install_github("hrbrmstr/ggalt")
-# options(scipen = 999)
-
- library('ggalt')
+library('ggalt')
 ```
 
 
@@ -124,59 +117,106 @@ summary(d)
 ```
 On average, the employees are 64% satisfied with their jobs; they have mean performance score of 0.71 (out of 1); an ordinary employee worked roughly on 3 - 4 different projects per year; it takes them 201.1 hours to complete their jobs per month; an avarage employee worked almost 3.5 years in the company (min = 2, max = 10); attrition rate is 23.81%; unfortunately only 2.1% of employees were promoted in the last 5 years. 8.24% of the employees are highly paid, 48.78% is lowly paid, 42.98% gets medium wage.
 
+We want to see the employees Salary levels : 
+```{r}
+d %>% 
+  count(salary) %>% 
+  formattable(align = 'l')
+```
+We can see clearly that the range of salaries are not balanced, 8% of high salary while 48 % has low salary. 
+
+Below 2 table Inspired from <https://www.kaggle.com/msjgriffiths/explore-explain-density-decision-trees>
+
+let's see the departments distribution :  
+```{r}
+d %>% 
+  count(departments) %>% 
+  formattable(align = 'l')
+```
+Sales department is the biggest one if we compare with others. 
+
+
+We want to see the salary levels for each department : 
+```{r}
+d %>% 
+  count(departments, salary) %>% 
+  mutate(
+    salary = ordered(salary, c("low", "medium", "high")),
+    n = comma(n, 0)
+  ) %>% 
+  spread(salary, n) %>% 
+  formattable(list(area(T, 2:4) ~ color_tile("grey", "red")), align = 'l')
+```
+
 Having known all the column names and their related statistics, we wanted to visualize the distribution of the numerical ones, just to get better understanding for further interpretations. For this reason we employed histogram plots. Notice that bin sizes are adapted with respect to varying ranges of the data.
 
 ```{r}
 p1 <- ggplot(subset(d ), aes(x=satisfaction_level, colour=satisfaction_level)) +
+  theme_economist() + 
+  scale_color_economist()+
   theme(plot.title = element_text(size=12)) +
-  geom_histogram(binwidth = 0.05,color = 'black', fill = '#999999') +
+  geom_histogram(binwidth = 0.05,color = 'black')+ ##, fill = '#999999') +
   ggtitle("Satisfaction Level") +
   labs(x="Job Satis. Score", y="Employee Count", size = 8)
 
 p2 <- ggplot(subset(d ), aes(x=last_evaluation, colour=last_evaluation)) +
+  theme_economist() + 
+  scale_color_economist()+
   theme(plot.title = element_text(size=12)) +
-  geom_histogram(binwidth = 0.05,color = 'black', fill = '#009E73') +
+  geom_histogram(binwidth = 0.05,color = 'black')+ ##, fill = '#009E73') +
   ggtitle("Last Evaluation") +
   labs(x="Performance Score", y="Employee Count", size = 8)
 
 p3 <- ggplot(subset(d ), aes(x=number_project, colour=number_project)) +
-   theme(plot.title = element_text(size=12)) +
-  geom_histogram(binwidth = 1,color = 'black', fill = '#56B4E9') +
+  theme_economist() + 
+  scale_color_economist()+
+  theme(plot.title = element_text(size=12)) +
+  geom_histogram(binwidth = 1,color = 'black')+ ##, fill = '#56B4E9') +
   ggtitle("Yearly Projects") +
   labs(x="Number of Projects", y="Employee Count", size = 8)
 
 p4 <- ggplot(subset(d ), aes(x=average_montly_hours, colour=average_montly_hours)) +
+  theme_economist() + 
+  scale_color_economist()+
   theme(plot.title = element_text(size=12)) +
-  geom_histogram(binwidth = 10,color = 'black', fill = '#E69F00') +
+  geom_histogram(binwidth = 10,color = 'black')+ ##, fill = '#E69F00') +
   ggtitle("Average Monthly Hours")+
   labs(x="Monthly Hours", y="Employee Count", size = 8)
   
 
 p5 <- ggplot(subset(d ), aes(x=time_spend_company, colour=time_spend_company)) +
+  theme_economist() + 
+  scale_color_economist()+
   theme(plot.title = element_text(size=12)) +
-  geom_histogram(binwidth = 0.5,color = 'black', fill = '#F0E442') +
+  geom_histogram(binwidth = 0.5,color = 'black')+ ##, fill = '#F0E442') +
   ggtitle("Time Spent in Company") +
   labs(x="Time (Years)", y="Employee Count", size = 8)
 
 p6 <- ggplot(subset(d ), aes(x=Work_accident, colour=Work_accident)) +
+  theme_economist() + 
+  scale_color_economist()+
   theme(plot.title = element_text(size=12)) +
-  geom_bar(color = 'black', fill = '#0072B2') +
+  geom_bar(color = 'black')+ ##, fill = '#0072B2') +
   ggtitle("Work Accidents") +
   labs(x="Accident Count", y="Employee Count", size = 8) +
   scale_x_continuous(breaks = c(0,1,1))
 
 p7 <- ggplot(subset(d ), aes(x=left, colour=left)) +
+  theme_economist() + 
+  scale_color_economist()+
   theme(plot.title = element_text(size=12)) +
-  geom_bar(color = 'black', fill = '#D55E00') +
+  geom_bar(color = 'black')+ ##, fill = '#D55E00') +
   ggtitle("Employees Left") +
   labs(x="Left Count", y="Employee Count", size = 8) +
   scale_x_continuous(breaks = c(0,1,1))
 
 
 p8 <- ggplot(subset(d), aes(x=promotion_last_5years, colour=promotion_last_5years)) +
+  theme_economist() + 
+  scale_color_economist()+
   theme(plot.title = element_text(size=12)) +
   scale_x_continuous(breaks = c(0,1,1)) +
-  geom_bar(color = 'black', fill = '#CC79A7') +
+  geom_bar(color = 'black')+ ##, fill = '#CC79A7') +
   ggtitle("Promotion in 5 Years") +
   labs(x="Promotion Count", y="Employee Count", size = 8) 
 
@@ -209,36 +249,7 @@ multiplot(plotlist = pltList,cols = 2)
  }
 ```
 
-We want to see the employees Salary levels : 
-```{r}
-d %>% 
-  count(salary) %>% 
-  formattable(align = 'l')
-```
-We can see clearly that the range of salaries are not balanced, 8% of high salary while 48 % has low salary. 
 
-Below 2 table Inspired from <https://www.kaggle.com/msjgriffiths/explore-explain-density-decision-trees>
-
-let's see the departments distribution :  
-```{r}
-d %>% 
-  count(departments) %>% 
-  formattable(align = 'l')
-```
-Sales department is the biggest one if we compare with others. 
-
-
-We want to see the salary levels for each department : 
-```{r}
-d %>% 
-  count(departments, salary) %>% 
-  mutate(
-    salary = ordered(salary, c("low", "medium", "high")),
-    n = comma(n, 0)
-  ) %>% 
-  spread(salary, n) %>% 
-  formattable(list(area(T, 2:4) ~ color_tile("grey", "red")), align = 'l')
-```
 
 
 
@@ -562,8 +573,6 @@ As there are not enough samples in Group 3, basic k-means clustering we applied 
 ## References
 
 [Human Resources Analytics Data Set](https://www.kaggle.com/ludobenistant/hr-analytics/data)
+[Explore & Explain: Density & Decision Trees](https://www.kaggle.com/msjgriffiths/explore-explain-density-decision-trees)
 
-```{r}
-
-```
 
