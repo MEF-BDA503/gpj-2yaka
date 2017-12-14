@@ -36,9 +36,7 @@ We start by loading required libraries for this study.
 ```{r, message=FALSE}
 #install.packages("ggplot2")
 library('tidyverse')
-
 library("ggplot2")
-library("ggplot")
 library("ggcorrplot")
 
 # install 'ggalt' pkg
@@ -219,6 +217,8 @@ It appears that the level of satisfaction is pretty much the same for all the de
 
 ```{r}
 depLeftSatis <- d %>% group_by(departments) %>% summarise(Total =n(),LeftCount = sum(as.integer(left=="Yes"), Satisfaction = mean(satisfaction_level) ) %>% mutate(LeftRate = LeftCount/Total) 
+                                                         
+                
 
 ggplot(data = depLeftSatis, aes( x = reorder(departments, -LeftRate), y = LeftRate, fill = Satisfaction)) +
     theme(axis.text.x = element_text(angle = 60, hjust=1))+
@@ -455,22 +455,22 @@ Now, we are going to use this correlation matrix to make principal component ana
 names(dLeft)
 dLeft_pca <- dLeft  %>% mutate(salary_Num = ifelse(salary == "low", 0, ifelse(salary == "medium", 1, 2))) %>% select(-salary,-departments)
 
- survey_pca1 <-princomp(as.matrix(dLeft_pca[,1:8],scale=FALSE,cor=T))
+pca_wo_scaling <-princomp(as.matrix(dLeft_pca[,1:8]),cor=FALSE)
 
- survey_pca <-princomp(as.matrix(dLeft_pca[,1:8],scale=TRUE,cor=T))
+pca_w_scaling<-princomp(as.matrix(dLeft_pca[,1:8]),cor=TRUE)
 
-summary(survey_pca1,loadings=TRUE)
+summary(pca_wo_scaling,loadings=TRUE)
 
-summary(survey_pca,loadings=TRUE)
+summary(pca_w_scaling,loadings=TRUE)
 
 # pr.without.scaling <- prcomp(as.matrix(dLeft_pca[,1:8],center=TRUE,scale=FALSE))
 # 
-# biplot(pr.without.scaling )
+biplot(pca_wo_scaling)
 # 
 # 
 # pr.with.scaling <- prcomp(as.matrix(dLeft_pca[,1:8],center=TRUE,scale=TRUE))
 # 
-# biplot(pr.with.scaling )
+biplot(pca_w_scaling)
 
 ```
 
