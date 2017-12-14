@@ -39,6 +39,11 @@ library('tidyverse')
 library("ggplot2")
 library("ggcorrplot")
 library(ggthemes)
+substitute(formattable::as.htmlwidget(expr))
+library(shiny)
+#install.packages("formattable")
+library(formattable)
+library(htmlwidgets)
 
 # install 'ggalt' pkg
   devtools::install_github("hrbrmstr/ggalt")
@@ -203,6 +208,40 @@ multiplot(plotlist = pltList,cols = 2)
    ggtitle("Last Evaluation") )
  }
 ```
+
+We want to see the employees Salary levels : 
+```{r}
+d %>% 
+  count(salary) %>% 
+  formattable(align = 'l')
+```
+We can see clearly that the range of salaries are not balanced, 8% of high salary while 48 % has low salary. 
+
+Below 2 table Inspired from <https://www.kaggle.com/msjgriffiths/explore-explain-density-decision-trees>
+
+let's see the departments distribution :  
+```{r}
+d %>% 
+  count(departments) %>% 
+  formattable(align = 'l')
+```
+Sales department is the biggest one if we compare with others. 
+
+
+We want to see the salary levels for each department : 
+```{r}
+d %>% 
+  count(departments, salary) %>% 
+  mutate(
+    salary = ordered(salary, c("low", "medium", "high")),
+    n = comma(n, 0)
+  ) %>% 
+  spread(salary, n) %>% 
+  formattable(list(area(T, 2:4) ~ color_tile("grey", "red")), align = 'l')
+```
+
+
+
 Let's have a look at departmentwise job satisfaction level of the employees.
 
 ```{r, warning=FALSE}
@@ -524,4 +563,7 @@ As there are not enough samples in Group 3, basic k-means clustering we applied 
 
 [Human Resources Analytics Data Set](https://www.kaggle.com/ludobenistant/hr-analytics/data)
 
+```{r}
+
+```
 
