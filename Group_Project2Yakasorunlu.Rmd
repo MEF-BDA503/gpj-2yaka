@@ -216,7 +216,7 @@ Let's have a look at departmentwise job satisfaction level of the employees.
 It appears that the level of satisfaction is pretty much the same for all the departments except for some unhappy folks in the accounting department. While rest of the departments average satisfaction value is around 60% (which complies with overall satisfaction rate of 61.28%), accounting department's mean is below the company's mean. May be we should focus on that department seperately.
 
 ```{r}
-depLeftSatis <- d %>% group_by(departments) %>% summarise(Total =n(),LeftCount = sum(as.integer(left=="Yes"), Satisfaction = mean(satisfaction_level) ) %>% mutate(LeftRate = LeftCount/Total) 
+depLeftSatis <- d %>% group_by(departments) %>% summarise(Total =n(),LeftCount = sum(left), Satisfaction = mean(satisfaction_level) ) %>% mutate(LeftRate = LeftCount/Total) 
                                                          
                 
 
@@ -229,7 +229,7 @@ ggplot(data = depLeftSatis, aes( x = reorder(departments, -LeftRate), y = LeftRa
 As satisfaction level increases, left rate decreases.
 
 ```{r}
-depLeftSatis <- d %>% group_by(departments,salary) %>% summarise(Total =n(),LeftCount = sum(as.integer(left=="Yes"), Satisfaction = mean(satisfaction_level) ) %>% mutate(LeftRate = LeftCount/Total)
+depLeftSatis <- d %>% group_by(departments,salary) %>% summarise(Total =n(),LeftCount = sum(left), Satisfaction = mean(satisfaction_level) ) %>% mutate(LeftRate = LeftCount/Total)
 
 ggplot(data = depLeftSatis, aes( x = reorder(departments, -LeftRate), y = LeftRate, fill=salary)) +
     theme(axis.text.x = element_text(angle = 60, hjust=1)) +
