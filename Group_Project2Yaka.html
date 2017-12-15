@@ -1074,6 +1074,47 @@ dleft_Cluster</code></pre>
 <li>Cluster 4 corresponds with Group 2 (Mediocre satisfaction level (0.36 - 0.45) and low working hours (120 - 160 hours))</li>
 </ul>
 <p>As there are not enough samples in Group 3, basic k-means clustering we applied was not successful enough to discriminate the third Group (High satisfaction level and relatively high working hours). We think that further filtering is needed before reapplying clustering methods to this data.</p>
+<!-- ```{r echo=FALSE, eval=FALSE} -->
+<!-- #install.packages("shiny") -->
+<!-- d$left <- factor(d$left, labels=c("No", "Yes")) -->
+<!-- library("shiny") -->
+<!-- inputPanel( -->
+<!--   selectInput("dept", label = "Department:", -->
+<!--                 choices = c("accounting","hr","IT","management","marketing","product_mng","RandD","sales","support","technical"),selected="sales"), -->
+<!--   selectInput("salary", label = "Salary:", -->
+<!--                 choices = c("low","medium","high"),selected="low"), -->
+<!--     sliderInput("stlvl", label = "Satisfaction level:", -->
+<!--                 min= 0.05, max=1.0, value = c(0.05,1.0), step=0.05) -->
+<!--   ) -->
+<!-- renderPlot( -->
+<!-- ggplot(d %>% filter(departments==as.character( input$dept) & satisfaction_level>=as.numeric(input$stlvl[1]) & satisfaction_level<=as.numeric(input$stlvl[2]) & salary==as.character(input$salary)),aes(satisfaction_level,average_montly_hours))+ -->
+<!--   geom_point()+ -->
+<!-- # geom_point(aes(col=factor(d%>% filter(departments==as.character( input$dept) %>% select(left)))))+ -->
+<!-- # geom_encircle(data=subset(d,  -->
+<!-- #                                satisfaction_level>=0.05 &  -->
+<!-- #                                  satisfaction_level<0.12 &  -->
+<!-- #                                  average_montly_hours>240 &  -->
+<!-- #                                  average_montly_hours<=310), colour="blue",expand=0.05,spread=0.02,size=2) + -->
+<!-- #   geom_encircle(data=subset(d,  -->
+<!-- #                                satisfaction_level>=0.35 &  -->
+<!-- #                                  satisfaction_level<0.47 &  -->
+<!-- #                                  average_montly_hours>122 &  -->
+<!-- #                                  average_montly_hours<164), colour="blue", expand=0,spread=0.02,size=2) + -->
+<!-- #     geom_encircle(data=subset(d,  -->
+<!-- #                                satisfaction_level>=0.47 &  -->
+<!-- #                                  satisfaction_level<=1 &  -->
+<!-- #                                  average_montly_hours>129 &  -->
+<!-- #                                  average_montly_hours<279), colour="green", expand=0, spread=0.02,size=2) + -->
+<!-- #       geom_encircle(data=subset(d,  -->
+<!-- #                                satisfaction_level>=0.715 &  -->
+<!-- #                                  satisfaction_level<=0.9 &  -->
+<!-- #                                  average_montly_hours>215 &  -->
+<!-- #                                  average_montly_hours<278), colour="blue", expand=0, spread=0.02,size=2) + -->
+<!--    scale_x_continuous(breaks=seq(0.08, 1, 0.08), limits = c(0.08, 1)) +  -->
+<!--   scale_y_continuous(breaks=seq(100, 315, 30), limits = c(100, 315)) + -->
+<!--   labs(x="Satisfaction Level",y="Avg. Monthly Hours", title="Satisfaction Level vs. Average Monthly Hours",col="Left Work")  -->
+<!-- ) -->
+<!-- ``` -->
 </div>
 <div id="references" class="section level2">
 <h2>References</h2>
