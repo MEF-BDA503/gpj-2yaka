@@ -33,7 +33,7 @@ for (i in 1:numPlots) {
 
 ## Preparation
 We start by loading required libraries for this study. 
-```{r, message=FALSE}
+```{r, message=FALSE, warning=FALSE}
 #install.packages("ggplot2")
 library('tidyverse')
 library("ggplot2")
