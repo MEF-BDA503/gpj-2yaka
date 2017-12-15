@@ -571,7 +571,7 @@ When we compare the values of 4 clusters with our previously defined groups in t
 As there are not enough samples in Group 3, basic k-means clustering we applied was not successful enough to discriminate the third Group (High satisfaction level and relatively high working hours). We think that further filtering is needed before reapplying clustering methods to this data. 
 
 
-```{r echo=FALSE}
+```{r echo=FALSE, eval=FALSE}
 
 
 
