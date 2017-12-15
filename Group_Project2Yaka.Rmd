@@ -1,7 +1,3 @@
----
-output: html_document
-runtime: shiny
----
 ```{r, echo=FALSE}
 multiplot <- function(..., plotlist = NULL, file, cols = 1, layout = NULL) {
   require(grid)
@@ -38,15 +34,15 @@ for (i in 1:numPlots) {
 ## Preparation 
 We start by loading required libraries for this study. 
 ```{r, message=FALSE,warning=FALSE}
-library('tidyverse')
-library("ggplot2")
-library("ggcorrplot")
+library(tidyverse)
+library(ggplot2)
+library(ggcorrplot)
 library(ggthemes)
-substitute(formattable::as.htmlwidget(expr))
+#substitute(formattable::as.htmlwidget(expr))
 library(shiny)
 library(formattable)
 library(htmlwidgets)
-library('ggalt')
+library(ggalt)
 ```
 
 
@@ -637,6 +633,7 @@ ggplot(d %>% filter(departments==as.character( input$dept) & satisfaction_level>
 ## References
 
 [Human Resources Analytics Data Set](https://www.kaggle.com/ludobenistant/hr-analytics/data)
+
 [Explore & Explain: Density & Decision Trees](https://www.kaggle.com/msjgriffiths/explore-explain-density-decision-trees)
 
 
