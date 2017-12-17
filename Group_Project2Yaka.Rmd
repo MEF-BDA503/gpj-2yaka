@@ -102,7 +102,7 @@ All the data collected is from last 5 years whereas accident data belongs to pas
 5. Make conclusions and give insights
 
 
-
+## Explanatory Data Analysis
 
 ### Loading the Data
 Then we read dataset from csv file and had a quick look at its form. 
@@ -335,7 +335,7 @@ We pairwise plotted job satisfaction level versus average montly hours and also 
 ```{r}
 
 #Define three main groups which left the company 
-d$left <- factor(d$left, labels=c("No", "Yes"))
+d$left <- factor(d$left, labels=c("Working", "Quitted"))
 
 gg <- ggplot(d,aes(satisfaction_level,average_montly_hours)) +   theme_economist() + scale_color_economist()
 
@@ -447,6 +447,8 @@ Cumulative variance plot is as below:
 ```{r}
 
 ggplot(data.frame(pc=1:8,cum_var=c(0.4123323, 0.5755905, 0.7074989, 0.8332550,0.9502024,0.97166737,0.98797999,1.00000000)),aes(x=pc,y=cum_var)) + 
+  theme_economist() +
+  scale_color_economist() +
   geom_point() +
   geom_line() +
   labs(x="Principal Component Number",
@@ -466,19 +468,19 @@ We tried K-Means clustering to be able to cluster mass of people who left the co
 ```{r}
 
 #Filter to get the data from left people only
-dleft<- subset(d, left=='Yes') 
+dleft<- subset(d, left=='Quitted') 
 dleft<- select(dleft,-left)
 
 
 #apply k-means with 3 clusters and 30 iterations
-set.seed(20)
+set.seed(42)
 dleft_Cluster <- kmeans(dleft[, 1:7], 3, nstart = 30)
 
-head(dleft_Cluster,5)
+dleft_Cluster$centers
 
 ```
 
-When we compare the values of 3 clusters with our previously defined groups in two graphs (Satisfaction Level vs. Avg. Monthly Hours, Satisfaction Level vs. Time Spend In Company), we found that there are similarities below:
+When we compare the center values of 3 clusters with our previously defined groups in the previous two graphs (Satisfaction Level vs. Avg. Monthly Hours, Satisfaction Level vs. Time Spend In Company), we are able to math them with the groups found in EDA
 
 + Cluster 1: High satisfaction level, long working hours, leaves late (corresponds to Group 3)
 + Cluster 2: Low satisfaction level, very long working hours, leaves at medium term (corresponds to Group 1) 
@@ -495,41 +497,34 @@ set.seed(42)
 ```
 Then _left_ column is chosen as response and the rest are chosen as predictors. We put them in a data frame.
 ```{r}
-  d %>% # read in the data
+head(d)
+```
+
+```{r}
+  d <- d %>% # read in the data
   select(left, departments, satisfaction_level, 
          last_evaluation, number_project, average_montly_hours,
          time_spend_company, promotion_last_5years, salary) %>%
   mutate(departments = factor(departments), 
-         salary = factor(salary)) %>% head(10)
+         salary = factor(salary))
+head(d)
 
 ```
 
-Then we randomly splitted our data int
-```{r}
-#Split data into training and test sets
-.d <- c("training", "test") %>%
-  sample(nrow(d), replace = T) %>%
-  split(d, .)
-```
-We shuffle the dataset, name the result shuffled
-```{r}
-n <- nrow(d)
-shuffled <- d[sample(n),]
-```
 Split the data in train and test
 ```{r}
-train_ind<-1:round(0.7 * n)
-train_d<-shuffled[train_ind,]
-test_ind<-(round(0.7 * n) + 1):n
-test_d<-shuffled[test_ind,]
+n <- nrow(d)
+indices <- sample(n, n*0.7)
+train_d <- d[indices, ]
+test_d <- d[-indices, ]
+head(train_d)
 ```
 
 We fit the model
 
 ```{r}
 
-rtree_fit <- rpart(left ~ ., 
-          train_d) 
+rtree_fit <- rpart(left ~ ., data = train_d) 
 rpart.plot(rtree_fit)
 
 ```
@@ -539,15 +534,20 @@ To test the fit quality, we applied our model with fitted parameters to test dat
 
 ```{r}
 res <- predict(rtree_fit, test_d)
-
 auc(as.numeric(test_d$left) - 1, res[, 2])
 ```
 
-Prediction success of 97% is very good. We can comfortably say that
+Prediction success of 97% is very good. We can comfortably say that primary factor that determines an employee's resignation is **satisfaction level**. If it is lower than 46%, people tend to quit. Those unhappy guys are divided into two categories:
+
++ If he/she works on many projects (more than 2.5 on yearly basis), they still leave if they are desperately unsatisfied with the job (threshold level = 0.11). Those must belong to **Cluster 2** (i.e Group 1) because they have such a low satisfaction value but still work on more projects. Since number of projects correlates with average working hours, they must work for long hours to complete the projects. 
+
++ If he/she works on few projects (less than 2.5 on yearly basis), they still leave even if their bosses are happy about their work (evaluation score > 0.56). Much probably they fall into  **Cluster 3** (i.e Group 2) because they are not very much satisfied with the job and the number of projects they work on is not much. So they do not commit long hours to work as those folks in the last cluster.
+
+Secondary factor that determines the satisfied employees quit decision is **time spent in the company**. If someone is working in the same company between 4.5 - 6.5 years, they break their comfort zone and flee because they work for long hours (> 216 h monthly basis) even if their bosses are very happy with their work (evaluation score > 0.80). We belive that this category corresponds to patient, hardworking, motivated employees of **Cluster 1** (i.e. Group 3).
 
 ## Conclusion
 
-Our EDA is in good compliance with the results deduced from K-Means clustering. We are able to match our previously found groups with three clusters.  
+Our EDA is in good compliance with the results deduced from K-Means clustering. We are able to match our previously found groups with three clusters. Furthermore Decision Tree Analysis supports our findings. 
 
 ## References
 
