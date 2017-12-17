@@ -48,6 +48,10 @@ library(shiny)
 library(formattable)
 library(htmlwidgets)
 library(ggalt)
+library(party)
+library(rpart)
+library(rpart.plot)
+library(pROC)
 ```
 
 
@@ -140,7 +144,7 @@ As you can see _Sales Department_ is the largest and _Management_ is the smalles
 
 
 Departmentwise salary distribution is as follows: 
-```{r}
+```{r, warning=FALSE}
 d %>% 
   count(departments, salary) %>% group_by(departments) %>% 
   mutate(
@@ -152,7 +156,7 @@ d %>%
   formattable(list(area(T, 2:4) ~ color_tile("grey", "pink")), align = 'l')
 ```
 
-As it is visualised in the table above better, only _Management Department_ is well balanced in terms of salary. Other than that the rest of the departments are paid in the lower and medium wage nearly equally. Since nearly all of the employess work for low and medium wage, salary alone cannot be a dominant factor for the decision of quiting. 
+As it is better visualised in the table above, only _Management Department_ is well balanced in terms of salary. Other than that the rest of the departments are paid in the lower and medium wage nearly equally. Since nearly all of the employess work for low and medium wage, salary alone cannot be a dominant factor for the decision of quiting. 
 
 Now, having known all the column names and their related statistics, we wanted to visualize the distribution of the numerical ones, just to get better understanding for further interpretations. For this reason we employed histogram plots. Notice that bin sizes are adapted with respect to varying ranges of the data.
 
@@ -250,7 +254,7 @@ Let's have a look at departmentwise job satisfaction level of the employees.
   
 ```
 
-It appears that the level of satisfaction is pretty much the same for all the departments except for some unhappy folks in the accounting department. While rest of the departments average satisfaction value is around 60% (which complies with overall satisfaction rate of 61.28%), accounting department's mean is below the company's mean. May be we should focus on that department seperately.
+It appears that the level of satisfaction is pretty much the same for all the departments except for some unhappy folks in the accounting department. While rest of the departments average satisfaction value is around 60% (which complies with overall satisfaction rate of 61.28%), accounting department's mean is below the company's mean.
 
 ```{r}
 depLeftSatis <- d %>% group_by(departments) %>% summarise(Total =n(),LeftCount = sum(left), Satisfaction = mean(satisfaction_level) ) %>% mutate(LeftRate = LeftCount/Total) 
@@ -265,7 +269,9 @@ ggplot(data = depLeftSatis, aes( x = reorder(departments, -LeftRate), y = LeftRa
   
 ```
 
-As satisfaction level increases, left rate decreases.
+Among all the departments, _HR_ is the one with highest attrition rate, then follows _Accounting_. The top three departments are also the most unsatisfied ones in which _Accounting_ peaks in unhappiness. From the graph above we deduced that _Satisfaction Level_ is a pretty important factor in quitting the company.
+
+We also replotted the graph above by filling each bar according to the salary distribution of the department of interest. The salary imbalance within the departments as well as the whole company is apperent again. Even the managers in the _Management Department_ are not paid highly since nearly none of its employees are paid high.
 
 ```{r}
 depLeftSatis <- d %>% group_by(departments,salary) %>% summarise(Total =n(),LeftCount = sum(left), Satisfaction = mean(satisfaction_level) ) %>% mutate(LeftRate = LeftCount/Total)
@@ -278,9 +284,9 @@ ggplot(data = depLeftSatis, aes( x = reorder(departments, -LeftRate), y = LeftRa
   
 ```
 
-Notice that altough job satisfaction level is uniformly distributed among the departments, the left rate varies abrubtly, maximized at the HR department. So there must be other factors that effect employee's decision to sign-out, such as salary.
+Notice that altough job satisfaction level is uniformly distributed among the departments, the left rate is not, it is maximized at the HR department. So there must be other factors that effect employee's decision to sign-out, such as long working hours.
 
-Now, let's look at the categorical variables, salary and department name. We wanted to compare left and remained employee counts by departments and salary categories. When salary category does not give much insight about the characteristics of left people, we found that the 3 departments have considerably higher number of people left. These departments are sales, technical and support.
+Now, let's look at the categorical variables; salary and departments. We wanted to compare the resigned and the remained employees by departments and salary categories. Bear in mind that in the graphs below the left ratio is not plotted but total count is. The departments with the highest left ratio are _HR_, _Accounting_ and _Technical_ departments. We already noticed that salary category did not give much insight about the characteristics of people left. However, if one is paid high in this company he/she is unlikely to resing.
 
 ```{r}
 # install.packages("ggthemes") # Install 
@@ -317,7 +323,7 @@ ggcorrplot(CorrMat, hc.order = TRUE,
            ggtheme=theme_economist)
 ```
 
-Maybe it is better to focus on the people who quit, already. We look at the correlation matrix of those to understand factors affecting their final decision to quit.
+Maybe it is better to focus on the people who quit, already. For this reason we filtered our data. 
 
 ```{r}
 dLeft <- d %>% filter(left==1) %>% select(-left)
@@ -368,8 +374,9 @@ From the satisfaction vs. monthly hours plot, three seperate clusters are clearl
 + *Group 2:* Mediocre satisfaction level and low working hours 
 + *Group 3:* High satisfaction level and high working hours
 
-It is no surprise that employees belonging to the first group quits the job. Furthermore, it would not be wrong to call the second group as **unmotivated** and the last group as **motivated**. It is very surprising to see motivated employees with such a high satisfaction level (>0.8) and long working hours. Those ones also must be the ones who works on more projects than the average, since average monthly hours highly correlates with number of projects.
+It is no surprise that employees belonging to the first group quits the job. Furthermore, it would not be wrong to call the second group as **unmotivated** and the last group as **motivated**. It is very surprising to see motivated employees with such a high satisfaction level (>0.8) and long working hours leave the company. Those ones also must be the ones who works on more projects than the average, since average monthly hours highly correlates with number of projects. 
 
+We are also curious whether the time spent in the company effect employee's resignation. When we plotted _time spent_ with respect to _satisfaction level_. 
 
 ```{r}
 
@@ -398,27 +405,15 @@ gg + geom_encircle(data=subset(d,
 ```
 
 
-From the graph above, it is seen that the motivated last group leaves the company between four and six years. May be they did not the promotion or salary increase they expected. People who passes six years thereshold, does not tend to leave the company later.
+In this new plot wee found the traces of previous groups above. The ones who left localized in the same _satisfaction level_ ranges. So, we could attribute _time spent_ to define the three groups above. For example, it is seen that the motivated last group leaves the company between four and six years. Their high motivation let them to keep the job for longer periods. May be they did not get the promotion or salary increase they expected through out the years and they leave at the end. Similarly, When we evaluated the other two groups in the last two graphs together, new characteristics of the groups become:
 
-<!-- ## K-Means Clustering -->
-<!-- ```{r} -->
++ *Group 1:* Low satisfaction level, long working hours and leaves in medium term (3-5 years)
++ *Group 2:* Mediocre satisfaction level, low working hours and leaves early (around 3 years)
++ *Group 3:* High satisfaction level and high working hours and leaves late (5-6 years)
 
-<!-- #Get selected columns from data set -->
-<!-- d2 <- d %>% select(satisfaction_level,average_montly_hours) -->
+Interestinly, people who passes  years thereshold, does not tend to leave the company later. This must be because of the people's reluctancy to go out of their comfort zone. Altough their salary and satisfaction level is low or at most mediocre, they still want to swim in the sea they know best.
 
-<!-- set.seed(35) -->
-
-<!-- #apply k-means clustering -->
-<!-- clusters<-kmeans(d2,centers=4) -->
-
-<!-- #Get the clusters -->
-<!-- mds_clusters<-data.frame(genre=names(genre_cluster$cluster),cluster_mds=genre_cluster$cluster) %>% arrange(cluster_mds,genre) -->
-<!-- mds_clusters -->
-
-<!-- ``` -->
-
-
-
+To understand factors which cause resignation decision better, we also plotted the correlation matrix for the numerical variables.
 
 ```{r}
 
@@ -438,44 +433,34 @@ Correlogram created from numerical values in our dataset shows that Average Mont
 
 ## Principal Component Analysis
 
-Now, we are going to use this correlation matrix to make principal component analysis. Before that we need to transform salaries to numeric values to see their effect on left rate. We need also to scale our data to avoid the dominance of the columns with high variance.
+With the insight gained from the correlation matrix of the employees who are already left. Before starting to principal component analysis we need to transform salaries to numeric values to see their effect on left rate. We need also to scale our data to avoid the dominance of the columns with high variance.
 ```{r}
 names(dLeft)
 dLeft_pca <- dLeft  %>% mutate(salary_Num = ifelse(salary == "low", 0, ifelse(salary == "medium", 1, 2))) %>% select(-salary,-departments)
-
-#pca_wo_scaling <-princomp(as.matrix(dLeft_pca[,1:8]),cor=FALSE)
-
 pca_w_scaling<-princomp(as.matrix(dLeft_pca[,1:8]),cor=TRUE)
-
-#summary(pca_wo_scaling,loadings=TRUE)
-
 summary(pca_w_scaling,loadings=TRUE)
-
-#biplot(pca_wo_scaling)
- 
 biplot(pca_w_scaling)
-
 ```
 
 Cumulative variance plot is as below: 
 
 ```{r}
 
-ggplot(data.frame(pc=1:5,cum_var=c(0.9996162, 0.9998254162, 0.9999774670, 0.9999894955,9.999969e-01)),aes(x=pc,y=cum_var)) + 
+ggplot(data.frame(pc=1:8,cum_var=c(0.4123323, 0.5755905, 0.7074989, 0.8332550,0.9502024,0.97166737,0.98797999,1.00000000)),aes(x=pc,y=cum_var)) + 
   geom_point() +
   geom_line() +
   labs(x="Principal Component Number",
        y="Cumulative Proportion", 
-       title="Principal Component vs. Cumulative Proportion")
+       title="Cumulative Proportion of the Var. Explained by PCs")
 
 ```
 
 
-The first component explains %99 of the variance and it is exactly average mounthly hours! We are also surprised with this result as you are. We were expecting to see salary too as a negative factor effecting attirition rate. We are going build our prediction model just on this factor to see future run away employees.
+The first four components explains %83 of the variance. 
 
 ## K-Means Clustering
 
-We tried K-Means clustering to be able to group mass of people who left the company.
+We tried K-Means clustering to be able to cluster mass of people who left the company.
 
 
 ```{r}
@@ -485,86 +470,93 @@ dleft<- subset(d, left=='Yes')
 dleft<- select(dleft,-left)
 
 
-#apply k-means with 4 clusters and 20 iterations
+#apply k-means with 3 clusters and 30 iterations
 set.seed(20)
-dleft_Cluster <- kmeans(dleft[, 1:7], 4, nstart = 20)
+dleft_Cluster <- kmeans(dleft[, 1:7], 3, nstart = 30)
 
-dleft_Cluster
+head(dleft_Cluster,5)
 
 ```
 
-When we compare the values of 4 clusters with our previously defined groups in two graphs (Satisfaction Level vs. Avg. Monthly Hours, Satisfaction Level vs. Time Spend In Company), we found that there are similarities below:
+When we compare the values of 3 clusters with our previously defined groups in two graphs (Satisfaction Level vs. Avg. Monthly Hours, Satisfaction Level vs. Time Spend In Company), we found that there are similarities below:
 
-+ Cluster 1 corresponds with Group 1 (Low satisfaction level (0.08 - 0.12) and long working hours (>240 hours))
-+ Cluster 4 corresponds with Group 2 (Mediocre satisfaction level (0.36 - 0.45) and low working hours (120 - 160 hours))
++ Cluster 1: High satisfaction level, long working hours, leaves late (corresponds to Group 3)
++ Cluster 2: Low satisfaction level, very long working hours, leaves at medium term (corresponds to Group 1) 
++ Cluster 3: Medium satisfaction level, low working hours, leaves early (corresponds to Group 2)
 
-As there are not enough samples in Group 3, basic k-means clustering we applied was not successful enough to discriminate the third Group (High satisfaction level and relatively high working hours). We think that further filtering is needed before reapplying clustering methods to this data. 
-
-
-
-<!-- ```{r echo=FALSE, eval=FALSE} -->
+Thus, one can conclude that leaving reasons depends on the employee's characteristics. Ones with medium satisfaction level, do not dedicate to work very much may be because they do not see any future in the company and quit early. Self-motivated ones work patiently long hours for long years but at the end they quit. Even low satisfied ones could work for very long hours they quit in medium terms.
 
 
+## Decision Three Analysis and Prediction
 
-<!-- #install.packages("shiny") -->
-<!-- d$left <- factor(d$left, labels=c("No", "Yes")) -->
+We first set seed to a constant value.
+```{r, warning=FALSE}
+set.seed(42)
+```
+Then _left_ column is chosen as response and the rest are chosen as predictors. We put them in a data frame.
+```{r}
+  d %>% # read in the data
+  select(left, departments, satisfaction_level, 
+         last_evaluation, number_project, average_montly_hours,
+         time_spend_company, promotion_last_5years, salary) %>%
+  mutate(departments = factor(departments), 
+         salary = factor(salary)) %>% head(10)
 
-<!-- library("shiny") -->
-<!-- inputPanel( -->
-<!--   selectInput("dept", label = "Department:", -->
-<!--                 choices = c("accounting","hr","IT","management","marketing","product_mng","RandD","sales","support","technical"),selected="sales"), -->
-<!--   selectInput("salary", label = "Salary:", -->
-<!--                 choices = c("low","medium","high"),selected="low"), -->
-<!--     sliderInput("stlvl", label = "Satisfaction level:", -->
-<!--                 min= 0.05, max=1.0, value = c(0.05,1.0), step=0.05) -->
-<!--   ) -->
+```
 
+Then we randomly splitted our data int
+```{r}
+#Split data into training and test sets
+.d <- c("training", "test") %>%
+  sample(nrow(d), replace = T) %>%
+  split(d, .)
+```
+We shuffle the dataset, name the result shuffled
+```{r}
+n <- nrow(d)
+shuffled <- d[sample(n),]
+```
+Split the data in train and test
+```{r}
+train_ind<-1:round(0.7 * n)
+train_d<-shuffled[train_ind,]
+test_ind<-(round(0.7 * n) + 1):n
+test_d<-shuffled[test_ind,]
+```
 
+We fit the model
 
-<!-- renderPlot( -->
+```{r}
 
+rtree_fit <- rpart(left ~ ., 
+          train_d) 
+rpart.plot(rtree_fit)
 
-<!-- ggplot(d %>% filter(departments==as.character( input$dept) & satisfaction_level>=as.numeric(input$stlvl[1]) & satisfaction_level<=as.numeric(input$stlvl[2]) & salary==as.character(input$salary)),aes(satisfaction_level,average_montly_hours))+ -->
-
-<!--   geom_point()+ -->
-
-<!-- # geom_point(aes(col=factor(d%>% filter(departments==as.character( input$dept) %>% select(left)))))+ -->
-
-<!-- # geom_encircle(data=subset(d,  -->
-<!-- #                                satisfaction_level>=0.05 &  -->
-<!-- #                                  satisfaction_level<0.12 &  -->
-<!-- #                                  average_montly_hours>240 &  -->
-<!-- #                                  average_montly_hours<=310), colour="blue",expand=0.05,spread=0.02,size=2) + -->
-<!-- #   geom_encircle(data=subset(d,  -->
-<!-- #                                satisfaction_level>=0.35 &  -->
-<!-- #                                  satisfaction_level<0.47 &  -->
-<!-- #                                  average_montly_hours>122 &  -->
-<!-- #                                  average_montly_hours<164), colour="blue", expand=0,spread=0.02,size=2) + -->
-<!-- #     geom_encircle(data=subset(d,  -->
-<!-- #                                satisfaction_level>=0.47 &  -->
-<!-- #                                  satisfaction_level<=1 &  -->
-<!-- #                                  average_montly_hours>129 &  -->
-<!-- #                                  average_montly_hours<279), colour="green", expand=0, spread=0.02,size=2) + -->
-<!-- #       geom_encircle(data=subset(d,  -->
-<!-- #                                satisfaction_level>=0.715 &  -->
-<!-- #                                  satisfaction_level<=0.9 &  -->
-<!-- #                                  average_montly_hours>215 &  -->
-<!-- #                                  average_montly_hours<278), colour="blue", expand=0, spread=0.02,size=2) + -->
-
-<!--    scale_x_continuous(breaks=seq(0.08, 1, 0.08), limits = c(0.08, 1)) +  -->
-<!--   scale_y_continuous(breaks=seq(100, 315, 30), limits = c(100, 315)) + -->
-<!--   labs(x="Satisfaction Level",y="Avg. Monthly Hours", title="Satisfaction Level vs. Average Monthly Hours",col="Left Work")  -->
-
-<!-- ) -->
-
-<!-- ``` -->
+```
 
 
+To test the fit quality, we applied our model with fitted parameters to test data.
+
+```{r}
+res <- predict(rtree_fit, test_d)
+
+auc(as.numeric(test_d$left) - 1, res[, 2])
+```
+
+Prediction success of 97% is very good. We can comfortably say that
+
+## Conclusion
+
+Our EDA is in good compliance with the results deduced from K-Means clustering. We are able to match our previously found groups with three clusters.  
 
 ## References
 
 [Human Resources Analytics Data Set](https://www.kaggle.com/ludobenistant/hr-analytics/data)
 
 [Explore & Explain: Density & Decision Trees](https://www.kaggle.com/msjgriffiths/explore-explain-density-decision-trees)
+
+[Titanic: Getting Starting with R - Part 3: Decision Trees](http://trevorstephens.com/kaggle-titanic-tutorial/r-part-3-decision-trees/)
+
+[Intro to Decision Trees with R Example](https://rpubs.com/osazuwa/123908)
 
 
