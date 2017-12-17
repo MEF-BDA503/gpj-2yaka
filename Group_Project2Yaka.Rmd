@@ -140,7 +140,7 @@ As you can see _Sales Department_ is the largest and _Management_ is the smalles
 
 
 Departmentwise salary distribution is as follows: 
-```{r}
+```{r, warning=FALSE}
 d %>% 
   count(departments, salary) %>% group_by(departments) %>% 
   mutate(
