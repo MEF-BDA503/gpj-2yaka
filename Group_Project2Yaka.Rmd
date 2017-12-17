@@ -1,3 +1,9 @@
+---
+output: 
+  html_document: 
+    fig_height: 7.5
+    fig_width: 10.5
+---
 ```{r, echo=FALSE}
 multiplot <- function(..., plotlist = NULL, file, cols = 1, layout = NULL) {
   require(grid)
@@ -31,25 +37,17 @@ for (i in 1:numPlots) {
 # Explanatory Data Analysis on HR Data
 
 
-## Preparation
+## Preparation 
 We start by loading required libraries for this study. 
-```{r, message=FALSE, warning=FALSE}
-#install.packages("ggplot2")
-library('tidyverse')
-library("ggplot2")
-library("ggcorrplot")
+```{r, message=FALSE,warning=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(ggcorrplot)
 library(ggthemes)
-substitute(formattable::as.htmlwidget(expr))
 library(shiny)
-#install.packages("formattable")
 library(formattable)
 library(htmlwidgets)
-
-# install 'ggalt' pkg
-  devtools::install_github("hrbrmstr/ggalt")
-# options(scipen = 999)
-
- library('ggalt')
+library(ggalt)
 ```
 
 
@@ -61,7 +59,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Abstract
 
-The dataset we have choosen is about human resources. Our aim is to answer an interesting question of a company such as "*Why are our best and most experienced employees leaving prematurely?*" We will try to find an answer to this question by analyzing answers of the employees to the job satisfaction survey and their work related records. The dataset is formed by the Human Resources (HR) department after conducting a survey on their employees.
+The dataset we have choosen is about human resources. Our aim is to answer an interesting question of a company such as "*Why are our best and most experienced employees leaving prematurely?*" We will try to find an answer to this question by analyzing answers of the employees to the job satisfaction survey and their work related records. The dataset is formed by the Human Resources (HR) department after conducting a survey on their employees. In this study we first run an _Explanatory Data Analysis (EDA)_ on tha data to make it more meaningfull, then we applied _Principal Component Analysis (PCA)_ to understand the factors that cause employess to leave. With the help of _k-Means clustering_ we obtained three different groups of employees that left with similar reasons and then employed a decision three analysis to predict the employees that will possibly leave the company in the future. 
 
 
 ## Data Description
@@ -124,48 +122,96 @@ summary(d)
 ```
 On average, the employees are 64% satisfied with their jobs; they have mean performance score of 0.71 (out of 1); an ordinary employee worked roughly on 3 - 4 different projects per year; it takes them 201.1 hours to complete their jobs per month; an avarage employee worked almost 3.5 years in the company (min = 2, max = 10); attrition rate is 23.81%; unfortunately only 2.1% of employees were promoted in the last 5 years. 8.24% of the employees are highly paid, 48.78% is lowly paid, 42.98% gets medium wage.
 
-Having known all the column names and their related statistics, we wanted to visualize the distribution of the numerical ones, just to get better understanding for further interpretations. For this reason we employed histogram plots. Notice that bin sizes are adapted with respect to varying ranges of the data.
+Here the employee's salary ranges can be seen in more detail: 
+```{r}
+d %>% 
+  count(salary) %>% 
+  formattable(align = 'l')
+```
+We can see clearly that the range of salaries are not well balanced. Only 8% of the employees are paid highly, while 48% of them are in the low salary range.
+
+Departmentwise employee count is as follows: 
+```{r}
+d %>% 
+  count(departments) %>% 
+  formattable(align = 'l')
+```
+As you can see _Sales Department_ is the largest and _Management_ is the smallest in size. 
+
+
+Departmentwise salary distribution is as follows: 
+```{r}
+d %>% 
+  count(departments, salary) %>% group_by(departments) %>% 
+  mutate(
+    salary = ordered(salary, c("low", "medium", "high")),
+    n = percent(n, 0),
+    n = n/sum(n)
+  ) %>% 
+  spread(salary, n) %>% 
+  formattable(list(area(T, 2:4) ~ color_tile("grey", "pink")), align = 'l')
+```
+
+As it is visualised in the table above better, only _Management Department_ is well balanced in terms of salary. Other than that the rest of the departments are paid in the lower and medium wage nearly equally. Since nearly all of the employess work for low and medium wage, salary alone cannot be a dominant factor for the decision of quiting. 
+
+Now, having known all the column names and their related statistics, we wanted to visualize the distribution of the numerical ones, just to get better understanding for further interpretations. For this reason we employed histogram plots. Notice that bin sizes are adapted with respect to varying ranges of the data.
 
 ```{r}
 p1 <- ggplot(subset(d ), aes(x=satisfaction_level, colour=satisfaction_level)) +
+  theme_economist() + 
+  scale_color_economist()+
   theme(plot.title = element_text(size=12)) +
-  geom_histogram(binwidth = 0.05,color = 'black', fill = '#999999') +
+  geom_histogram(binwidth = 0.05,color = 'black', fill = '#999999')  +
   ggtitle("Satisfaction Level") +
   labs(x="Job Satis. Score", y="Employee Count", size = 8)
 
+
+
 p2 <- ggplot(subset(d ), aes(x=last_evaluation, colour=last_evaluation)) +
+  theme_economist() + 
+  scale_color_economist()+
   theme(plot.title = element_text(size=12)) +
   geom_histogram(binwidth = 0.05,color = 'black', fill = '#009E73') +
   ggtitle("Last Evaluation") +
   labs(x="Performance Score", y="Employee Count", size = 8)
 
 p3 <- ggplot(subset(d ), aes(x=number_project, colour=number_project)) +
-   theme(plot.title = element_text(size=12)) +
-  geom_histogram(binwidth = 1,color = 'black', fill = '#56B4E9') +
+  theme_economist() + 
+  scale_color_economist()+
+  theme(plot.title = element_text(size=12)) +
+  geom_histogram(binwidth = 1,color = 'black', fill = '#56B4E9')  +
   ggtitle("Yearly Projects") +
   labs(x="Number of Projects", y="Employee Count", size = 8)
 
 p4 <- ggplot(subset(d ), aes(x=average_montly_hours, colour=average_montly_hours)) +
+  theme_economist() + 
+  scale_color_economist()+
   theme(plot.title = element_text(size=12)) +
-  geom_histogram(binwidth = 10,color = 'black', fill = '#E69F00') +
+  geom_histogram(binwidth = 10,color = 'black', fill = '#E69F00')  +
   ggtitle("Average Monthly Hours")+
   labs(x="Monthly Hours", y="Employee Count", size = 8)
   
 
 p5 <- ggplot(subset(d ), aes(x=time_spend_company, colour=time_spend_company)) +
+  theme_economist() + 
+  scale_color_economist()+
   theme(plot.title = element_text(size=12)) +
-  geom_histogram(binwidth = 0.5,color = 'black', fill = '#F0E442') +
+  geom_histogram(binwidth = 0.5,color = 'black', fill = '#F0E442')  +
   ggtitle("Time Spent in Company") +
   labs(x="Time (Years)", y="Employee Count", size = 8)
 
 p6 <- ggplot(subset(d ), aes(x=Work_accident, colour=Work_accident)) +
+  theme_economist() + 
+  scale_color_economist()+
   theme(plot.title = element_text(size=12)) +
-  geom_bar(color = 'black', fill = '#0072B2') +
+  geom_bar(color = 'black', fill = '#0072B2')+ ## +
   ggtitle("Work Accidents") +
   labs(x="Accident Count", y="Employee Count", size = 8) +
   scale_x_continuous(breaks = c(0,1,1))
 
 p7 <- ggplot(subset(d ), aes(x=left, colour=left)) +
+  theme_economist() + 
+  scale_color_economist()+
   theme(plot.title = element_text(size=12)) +
   geom_bar(color = 'black', fill = '#D55E00') +
   ggtitle("Employees Left") +
@@ -174,6 +220,8 @@ p7 <- ggplot(subset(d ), aes(x=left, colour=left)) +
 
 
 p8 <- ggplot(subset(d), aes(x=promotion_last_5years, colour=promotion_last_5years)) +
+  theme_economist() + 
+  scale_color_economist()+
   theme(plot.title = element_text(size=12)) +
   scale_x_continuous(breaks = c(0,1,1)) +
   geom_bar(color = 'black', fill = '#CC79A7') +
@@ -186,73 +234,20 @@ multiplot(p1,p2,p3,p4,p5,p6,p7,p8,cols=3)
 
 According to above histograms, we found that; there was nearly no promoted employee in the last five years. Bear in mind that the work accident data belongs to last two years and frequency of accidents is low but not zero. Monthly time spent in the company and number of projects which each employee works on both have positively skewed distributions. So, instead of mean, median value must be considered. Thus, a common employee works 4 projects per year, spending 200 hours per month.
 
-```{r, echo=FALSE, eval=FALSE}
-pltList <- list()
-name <- names(d)
-index = 1
-for (colName in names(d)) {
-    pltList[[index]] <- ggplot(d$colName,colour=d$colName) +
-    geom_histogram(binwidth = 0.5,color = 'black', fill = '#9932CC') +
-    ggtitle(colName) +
-    labs(x= name[index], y="Employee Count")
-    index = index + 1
-}
-multiplot(plotlist = pltList,cols = 2)
-
-```
-
-```{r,echo=FALSE, eval=FALSE}
- for (i in names(d)) { 
-     print(ggplot(subset(d ), aes(x=d[i], colour=d$i)) +
-   geom_histogram(binwidth = 0.05,color = 'black', fill = '#9932CC') +
-   ggtitle("Last Evaluation") )
- }
-```
-
-We want to see the employees Salary levels : 
-```{r}
-d %>% 
-  count(salary) %>% 
-  formattable(align = 'l')
-```
-We can see clearly that the range of salaries are not balanced, 8% of high salary while 48 % has low salary. 
-
-Below 2 table Inspired from <https://www.kaggle.com/msjgriffiths/explore-explain-density-decision-trees>
-
-let's see the departments distribution :  
-```{r}
-d %>% 
-  count(departments) %>% 
-  formattable(align = 'l')
-```
-Sales department is the biggest one if we compare with others. 
-
-
-We want to see the salary levels for each department : 
-```{r}
-d %>% 
-  count(departments, salary) %>% 
-  mutate(
-    salary = ordered(salary, c("low", "medium", "high")),
-    n = comma(n, 0)
-  ) %>% 
-  spread(salary, n) %>% 
-  formattable(list(area(T, 2:4) ~ color_tile("grey", "red")), align = 'l')
-```
-
-
-
 Let's have a look at departmentwise job satisfaction level of the employees.
 
 ```{r, warning=FALSE}
- dep_satis <- d %>%
+ 
+  dep_satis <- d %>%
   group_by(departments) %>%
   summarise (Satisfaction =mean(satisfaction_level))
   ggplot(data=dep_satis, aes(x=departments, y=Satisfaction)) +
-    theme_economist() + 
-      scale_color_economist()+
-  theme(axis.text.x = element_text(angle = 90, hjust=0,5))+
-  geom_bar(stat="identity", position=position_dodge(), fill="#FF9999", colour="black")
+  theme_economist() + 
+  scale_color_economist()+
+  theme(axis.text.x = element_text(angle = 90, hjust=0.5),axis.text = element_text(size=10) )+
+  geom_bar(stat="identity", position=position_dodge(), fill="pink", colour="black")+
+  labs(x= "Departments", y="Job Satisfaction Level")
+  
 ```
 
 It appears that the level of satisfaction is pretty much the same for all the departments except for some unhappy folks in the accounting department. While rest of the departments average satisfaction value is around 60% (which complies with overall satisfaction rate of 61.28%), accounting department's mean is below the company's mean. May be we should focus on that department seperately.
@@ -263,7 +258,9 @@ depLeftSatis <- d %>% group_by(departments) %>% summarise(Total =n(),LeftCount =
                 
 
 ggplot(data = depLeftSatis, aes( x = reorder(departments, -LeftRate), y = LeftRate, fill = Satisfaction)) +
-    theme(axis.text.x = element_text(angle = 60, hjust=1))+
+    theme_economist() + 
+    scale_color_economist()+
+    theme(axis.text.x = element_text(angle = 90, hjust=0.5))+
     geom_col()+labs(x= "Departments", y="Left Rate")
   
 ```
@@ -274,7 +271,9 @@ As satisfaction level increases, left rate decreases.
 depLeftSatis <- d %>% group_by(departments,salary) %>% summarise(Total =n(),LeftCount = sum(left), Satisfaction = mean(satisfaction_level) ) %>% mutate(LeftRate = LeftCount/Total)
 
 ggplot(data = depLeftSatis, aes( x = reorder(departments, -LeftRate), y = LeftRate, fill=salary)) +
-    theme(axis.text.x = element_text(angle = 60, hjust=1)) +
+    theme_economist() + 
+    scale_color_economist()+
+    theme(axis.text.x = element_text(angle = 90, hjust=0.5)) +
     geom_bar(stat="identity",position = "stack")+labs(x= "Departments", y="Left Rate")
   
 ```
@@ -304,7 +303,7 @@ p10 <- ggplot(d, aes(x=d$salary,fill=as.character(d$left) ))+
 multiplot(p9,p10,cols=2)
 ```
 
-Let's see correlation matrix for whole company
+When we checked the correlation matrix of the whole company, we see that left rate is negatively correlated with job satisfaction level with a coefficient of -0.39. Interestingly people who left seem the ones with the high satisfaction level. However, we need to dive deep into tha data to claim such a thing. Other results that we deduced from the correlation matrix are average monthly working hours are positively correlated with the number of projects that an employee works on per year with a coefficient of 0.42 and the last evaluation score is positively correlated with number of prokect with a coefficient of 0.35. It is obvious that employees who work on more project needs to stay in the office for longer hours. This company's evaluation system depends on hard work. Unfortunately all the effor that employees put on their work does not return them as salary increase or promotion. May be that is why they leave!
 
 ```{r}
 CorrMat <- round(cor(d[,0:8]),3)
@@ -315,18 +314,14 @@ ggcorrplot(CorrMat, hc.order = TRUE,
            method="circle", 
            colors = c("tomato2", "white", "springgreen3"), 
            title="Correlogram of Numeric Values", 
-           ggtheme=theme_bw)
+           ggtheme=theme_economist)
 ```
 
 Maybe it is better to focus on the people who quit, already. We look at the correlation matrix of those to understand factors affecting their final decision to quit.
 
 ```{r}
 dLeft <- d %>% filter(left==1) %>% select(-left)
-
-
- summary(dLeft)
-
-
+summary(dLeft)
 ```
 
 We pairwise plotted job satisfaction level versus average montly hours and also satisfaction level versus time spent in the company. Meanwhile, we also highlighted employees left the company. 
@@ -336,7 +331,7 @@ We pairwise plotted job satisfaction level versus average montly hours and also 
 #Define three main groups which left the company 
 d$left <- factor(d$left, labels=c("No", "Yes"))
 
-gg <- ggplot(d,aes(satisfaction_level,average_montly_hours))
+gg <- ggplot(d,aes(satisfaction_level,average_montly_hours)) +   theme_economist() + scale_color_economist()
 
 gg <- gg +geom_point(aes(col=factor(d$left)))
 
@@ -350,20 +345,21 @@ gg + geom_encircle(data=subset(d,
                                  satisfaction_level<0.47 & 
                                  average_montly_hours>122 & 
                                  average_montly_hours<164), colour="blue", expand=0,spread=0.02,size=2) +
-    geom_encircle(data=subset(d, 
+  geom_encircle(data=subset(d, 
                                satisfaction_level>=0.47 & 
                                  satisfaction_level<=1 & 
                                  average_montly_hours>129 & 
                                  average_montly_hours<279), colour="green", expand=0, spread=0.02,size=2) +
-      geom_encircle(data=subset(d, 
+  geom_encircle(data=subset(d, 
                                satisfaction_level>=0.715 & 
                                  satisfaction_level<=0.9 & 
                                  average_montly_hours>215 & 
                                  average_montly_hours<278), colour="blue", expand=0, spread=0.02,size=2) +
 
-   scale_x_continuous(breaks=seq(0.08, 1, 0.08), limits = c(0.08, 1)) + 
+  scale_x_continuous(breaks=seq(0.08, 1, 0.08), limits = c(0.08, 1)) + 
   scale_y_continuous(breaks=seq(100, 315, 30), limits = c(100, 315)) +
   labs(x="Satisfaction Level",y="Avg. Monthly Hours", title="Satisfaction Level vs. Average Monthly Hours",col="Left Work") 
+
 ```
 
 From the satisfaction vs. monthly hours plot, three seperate clusters are clearly seen with following properties:
@@ -379,7 +375,7 @@ It is no surprise that employees belonging to the first group quits the job. Fur
 
 gg <- ggplot(d,aes(satisfaction_level,time_spend_company))
 
-gg <- gg +geom_point(aes(col=factor(d$left)))
+gg <- gg + geom_point(aes(col=factor(d$left))) +  theme_economist() + scale_color_economist()
 
 gg + geom_encircle(data=subset(d, 
                                satisfaction_level>=0.72 & 
@@ -390,13 +386,13 @@ gg + geom_encircle(data=subset(d,
                                satisfaction_level>=0.36 & 
                                  satisfaction_level<=0.47 & 
                                  time_spend_company==3 ), colour="blue", expand=0.02,spread=0.02,size=2)+
-    geom_encircle(data=subset(d, 
+  geom_encircle(data=subset(d, 
                                satisfaction_level>=0.08 & 
                                  satisfaction_level<=0.12 & 
                                  time_spend_company>=3 &
                                 time_spend_company<=5), colour="blue", expand=0.02,spread=0.02,size=2)+
 
-   scale_x_continuous(breaks=seq(0.08, 1, 0.08), limits = c(0.08, 1)) + 
+  scale_x_continuous(breaks=seq(0.08, 1, 0.08), limits = c(0.08, 1)) + 
   scale_y_continuous(breaks =  seq(0,10,by=2), limits = c(0,10))+
   labs(x="Satisfaction Level",y="Time Spend In Company (Years)", title="Satisfaction Level vs. Time Spend In Company (Years)",col="Left Work") 
 ```
@@ -421,56 +417,6 @@ From the graph above, it is seen that the motivated last group leaves the compan
 
 <!-- ``` -->
 
-```{r}
-# install.packages("scatterplot3d") # Install
-# library("scatterplot3d") # load
-# 
-# scatterplot3d(x=d$satisfaction_level, y=d$average_montly_hours, z=d$departments,)
-# 
-# 
-# 
-#  devtools::install_github("ropensci/plotly")
-# 
-# # install.packages("assertthat")
-# 
-# library(plotly)
-# gr <- d %>% select(satisfaction_level,average_montly_hours,departments,left) %>% group_by(departments,average_montly_hours,satisfaction_level) %>% 
-#   summarise(Total =n(),
-#   LeftCount = sum(as.integer(left=="Yes"))) %>%    
-#   mutate(LeftRate = LeftCount/Total)
-#   
-# 
-# 
-# # print(gr$LeftCount)
-# 
-# colors <- c('#4AC6B7', '#1972A4', '#965F8A', '#FF7070', '#C61951')
-# 
-# p <- plotly(gr, x = ~gr$Satisfaction, y = ~gr$average_montly_hours, z = ~gr$LeftRate, color = ~d$departments, size = ~gr$departments, colors = colors,
-#              marker = list(symbol = 'circle', sizemode = 'diameter'), sizes = c(5, 150)) %>%
-#   layout(title = 'Life Expectancy v. Per Capita GDP, 2007',
-#          scene = list(xaxis = list(title = 'GDP per capita (2000 dollars)',
-#                       gridcolor = 'rgb(255, 255, 255)',
-#                       # range = c(2.003297660701705, 5.191505530708712),
-#                       type = 'log',
-#                       zerolinewidth = 1,
-#                       ticklen = 5,
-#                       gridwidth = 2),
-#                yaxis = list(title = 'Life Expectancy (years)',
-#                       gridcolor = 'rgb(255, 255, 255)',
-#                       # range = c(36.12621671352166, 91.72921793264332),
-#                       zerolinewidth = 1,
-#                       ticklen = 5,
-#                       gridwith = 2),
-#                zaxis = list(title = 'Population',
-#                             gridcolor = 'rgb(255, 255, 255)',
-#                             type = 'log',
-#                             zerolinewidth = 1,
-#                             ticklen = 5,
-#                             gridwith = 2)),
-#          paper_bgcolor = 'rgb(243, 243, 243)',
-#          plot_bgcolor = 'rgb(243, 243, 243)')
-
-```
 
 
 
@@ -484,7 +430,7 @@ ggcorrplot(CorrMat, hc.order = TRUE,
            method="circle", 
            colors = c("tomato2", "white", "springgreen3"), 
            title="Correlogram of Numeric Values", 
-           ggtheme=theme_bw)
+           ggtheme=theme_economist)
 ```
 
 
@@ -492,26 +438,21 @@ Correlogram created from numerical values in our dataset shows that Average Mont
 
 ## Principal Component Analysis
 
-Now, we are going to use this correlation matrix to make principal component analysis. Before that we need to transform salaries to numeric values to see their effect on left rate.
+Now, we are going to use this correlation matrix to make principal component analysis. Before that we need to transform salaries to numeric values to see their effect on left rate. We need also to scale our data to avoid the dominance of the columns with high variance.
 ```{r}
 names(dLeft)
 dLeft_pca <- dLeft  %>% mutate(salary_Num = ifelse(salary == "low", 0, ifelse(salary == "medium", 1, 2))) %>% select(-salary,-departments)
 
-pca_wo_scaling <-princomp(as.matrix(dLeft_pca[,1:8]),cor=FALSE)
+#pca_wo_scaling <-princomp(as.matrix(dLeft_pca[,1:8]),cor=FALSE)
 
 pca_w_scaling<-princomp(as.matrix(dLeft_pca[,1:8]),cor=TRUE)
 
-summary(pca_wo_scaling,loadings=TRUE)
+#summary(pca_wo_scaling,loadings=TRUE)
 
 summary(pca_w_scaling,loadings=TRUE)
 
-# pr.without.scaling <- prcomp(as.matrix(dLeft_pca[,1:8],center=TRUE,scale=FALSE))
-# 
-biplot(pca_wo_scaling)
-# 
-# 
-# pr.with.scaling <- prcomp(as.matrix(dLeft_pca[,1:8],center=TRUE,scale=TRUE))
-# 
+#biplot(pca_wo_scaling)
+ 
 biplot(pca_w_scaling)
 
 ```
@@ -559,11 +500,71 @@ When we compare the values of 4 clusters with our previously defined groups in t
 
 As there are not enough samples in Group 3, basic k-means clustering we applied was not successful enough to discriminate the third Group (High satisfaction level and relatively high working hours). We think that further filtering is needed before reapplying clustering methods to this data. 
 
+
+
+<!-- ```{r echo=FALSE, eval=FALSE} -->
+
+
+
+<!-- #install.packages("shiny") -->
+<!-- d$left <- factor(d$left, labels=c("No", "Yes")) -->
+
+<!-- library("shiny") -->
+<!-- inputPanel( -->
+<!--   selectInput("dept", label = "Department:", -->
+<!--                 choices = c("accounting","hr","IT","management","marketing","product_mng","RandD","sales","support","technical"),selected="sales"), -->
+<!--   selectInput("salary", label = "Salary:", -->
+<!--                 choices = c("low","medium","high"),selected="low"), -->
+<!--     sliderInput("stlvl", label = "Satisfaction level:", -->
+<!--                 min= 0.05, max=1.0, value = c(0.05,1.0), step=0.05) -->
+<!--   ) -->
+
+
+
+<!-- renderPlot( -->
+
+
+<!-- ggplot(d %>% filter(departments==as.character( input$dept) & satisfaction_level>=as.numeric(input$stlvl[1]) & satisfaction_level<=as.numeric(input$stlvl[2]) & salary==as.character(input$salary)),aes(satisfaction_level,average_montly_hours))+ -->
+
+<!--   geom_point()+ -->
+
+<!-- # geom_point(aes(col=factor(d%>% filter(departments==as.character( input$dept) %>% select(left)))))+ -->
+
+<!-- # geom_encircle(data=subset(d,  -->
+<!-- #                                satisfaction_level>=0.05 &  -->
+<!-- #                                  satisfaction_level<0.12 &  -->
+<!-- #                                  average_montly_hours>240 &  -->
+<!-- #                                  average_montly_hours<=310), colour="blue",expand=0.05,spread=0.02,size=2) + -->
+<!-- #   geom_encircle(data=subset(d,  -->
+<!-- #                                satisfaction_level>=0.35 &  -->
+<!-- #                                  satisfaction_level<0.47 &  -->
+<!-- #                                  average_montly_hours>122 &  -->
+<!-- #                                  average_montly_hours<164), colour="blue", expand=0,spread=0.02,size=2) + -->
+<!-- #     geom_encircle(data=subset(d,  -->
+<!-- #                                satisfaction_level>=0.47 &  -->
+<!-- #                                  satisfaction_level<=1 &  -->
+<!-- #                                  average_montly_hours>129 &  -->
+<!-- #                                  average_montly_hours<279), colour="green", expand=0, spread=0.02,size=2) + -->
+<!-- #       geom_encircle(data=subset(d,  -->
+<!-- #                                satisfaction_level>=0.715 &  -->
+<!-- #                                  satisfaction_level<=0.9 &  -->
+<!-- #                                  average_montly_hours>215 &  -->
+<!-- #                                  average_montly_hours<278), colour="blue", expand=0, spread=0.02,size=2) + -->
+
+<!--    scale_x_continuous(breaks=seq(0.08, 1, 0.08), limits = c(0.08, 1)) +  -->
+<!--   scale_y_continuous(breaks=seq(100, 315, 30), limits = c(100, 315)) + -->
+<!--   labs(x="Satisfaction Level",y="Avg. Monthly Hours", title="Satisfaction Level vs. Average Monthly Hours",col="Left Work")  -->
+
+<!-- ) -->
+
+<!-- ``` -->
+
+
+
 ## References
 
 [Human Resources Analytics Data Set](https://www.kaggle.com/ludobenistant/hr-analytics/data)
 
-```{r}
+[Explore & Explain: Density & Decision Trees](https://www.kaggle.com/msjgriffiths/explore-explain-density-decision-trees)
 
-```
 
