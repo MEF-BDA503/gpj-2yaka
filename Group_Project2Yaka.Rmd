@@ -143,7 +143,7 @@ d %>%
 As you can see _Sales Department_ is the largest and _Management_ is the smallest in size. 
 
 
-Departmentwise salary distribution is as follows: 
+Departmentwise salary frequencies are shown below:
 ```{r, warning=FALSE}
 d %>% 
   count(departments, salary) %>% group_by(departments) %>% 
@@ -236,7 +236,7 @@ p8 <- ggplot(subset(d), aes(x=promotion_last_5years, colour=promotion_last_5year
 multiplot(p1,p2,p3,p4,p5,p6,p7,p8,cols=3)
 ```
 
-According to above histograms, we found that; there was nearly no promoted employee in the last five years. Bear in mind that the work accident data belongs to last two years and frequency of accidents is low but not zero. Monthly time spent in the company and number of projects which each employee works on both have positively skewed distributions. So, instead of mean, median value must be considered. Thus, a common employee works 4 projects per year, spending 200 hours per month.
+According to above histograms, we found that; there was nearly no promoted employee in the last five years. Bear in mind that the work accident data belongs to last two years and frequency of accidents is low but not zero. Monthly time spent in the company and number of projects which each employee works on both have positively skewed distributions. So, instead of mean, median value must be considered. Thus, a common employee works 4 projects per year, spending 200 hours per month. Average monthl
 
 Let's have a look at departmentwise job satisfaction level of the employees.
 
@@ -271,7 +271,7 @@ ggplot(data = depLeftSatis, aes( x = reorder(departments, -LeftRate), y = LeftRa
 
 Among all the departments, _HR_ is the one with highest attrition rate, then follows _Accounting_. The top three departments are also the most unsatisfied ones in which _Accounting_ peaks in unhappiness. From the graph above we deduced that _Satisfaction Level_ is a pretty important factor in quitting the company.
 
-We also replotted the graph above by filling each bar according to the salary distribution of the department of interest. The salary imbalance within the departments as well as the whole company is apperent again. Even the managers in the _Management Department_ are not paid highly since nearly none of its employees are paid high.
+We also replotted the graph above by filling each bar according to the salary distribution of the department of interest. The salary imbalance within the departments as well as the whole company is apperent again.
 
 ```{r}
 depLeftSatis <- d %>% group_by(departments,salary) %>% summarise(Total =n(),LeftCount = sum(left), Satisfaction = mean(satisfaction_level) ) %>% mutate(LeftRate = LeftCount/Total)
@@ -289,9 +289,6 @@ Notice that altough job satisfaction level is uniformly distributed among the de
 Now, let's look at the categorical variables; salary and departments. We wanted to compare the resigned and the remained employees by departments and salary categories. Bear in mind that in the graphs below the left ratio is not plotted but total count is. The departments with the highest left ratio are _HR_, _Accounting_ and _Technical_ departments. We already noticed that salary category did not give much insight about the characteristics of people left. However, if one is paid high in this company he/she is unlikely to resing.
 
 ```{r}
-# install.packages("ggthemes") # Install 
-library(ggthemes) # Load
-
 p9 <- ggplot(d, aes(x=d$departments,fill=as.character(d$left)))+
       theme_economist() + 
       scale_color_economist()+
@@ -401,7 +398,7 @@ gg + geom_encircle(data=subset(d,
 
   scale_x_continuous(breaks=seq(0.08, 1, 0.08), limits = c(0.08, 1)) + 
   scale_y_continuous(breaks =  seq(0,10,by=2), limits = c(0,10))+
-  labs(x="Satisfaction Level",y="Time Spend In Company (Years)", title="Satisfaction Level vs. Time Spend In Company (Years)",col="Left Work") 
+  labs(x="Satisfaction Level",y="Time Spend In Company (Years)", title="Satisfaction Level vs. Time Spent In Company (Years)",col="Left Work") 
 ```
 
 
@@ -489,7 +486,7 @@ When we compare the center values of 3 clusters with our previously defined grou
 Thus, one can conclude that leaving reasons depends on the employee's characteristics. Ones with medium satisfaction level, do not dedicate to work very much may be because they do not see any future in the company and quit early. Self-motivated ones work patiently long hours for long years but at the end they quit. Even low satisfied ones could work for very long hours they quit in medium terms.
 
 
-## Decision Three Analysis and Prediction
+## Decision Tree Analysis and Prediction
 
 We first set seed to a constant value.
 ```{r, warning=FALSE}
