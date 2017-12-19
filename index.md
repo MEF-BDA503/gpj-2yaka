@@ -27,3 +27,7 @@
 ### Nov 18 & Dec 3 & Dec 15
 
 + [Here](Group_Project2Yaka.html) you can find last version of our project. 
+
+### Dec 19
+
++ You can see our presentation from [here](2YakaSlides.html) 

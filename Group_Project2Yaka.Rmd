@@ -102,7 +102,7 @@ All the data collected is from last 5 years whereas accident data belongs to pas
 5. Make conclusions and give insights
 
 
-
+## Explanatory Data Analysis
 
 ### Loading the Data
 Then we read dataset from csv file and had a quick look at its form. 
@@ -143,7 +143,7 @@ d %>%
 As you can see _Sales Department_ is the largest and _Management_ is the smallest in size. 
 
 
-Departmentwise salary distribution is as follows: 
+Departmentwise salary frequencies are shown below:
 ```{r, warning=FALSE}
 d %>% 
   count(departments, salary) %>% group_by(departments) %>% 
@@ -236,7 +236,7 @@ p8 <- ggplot(subset(d), aes(x=promotion_last_5years, colour=promotion_last_5year
 multiplot(p1,p2,p3,p4,p5,p6,p7,p8,cols=3)
 ```
 
-According to above histograms, we found that; there was nearly no promoted employee in the last five years. Bear in mind that the work accident data belongs to last two years and frequency of accidents is low but not zero. Monthly time spent in the company and number of projects which each employee works on both have positively skewed distributions. So, instead of mean, median value must be considered. Thus, a common employee works 4 projects per year, spending 200 hours per month.
+According to above histograms, we found that; there was nearly no promoted employee in the last five years. Bear in mind that the work accident data belongs to last two years and frequency of accidents is low but not zero. Monthly time spent in the company and number of projects which each employee works on both have positively skewed distributions. So, instead of mean, median value must be considered. Thus, a common employee works 4 projects per year, spending 200 hours per month. Average monthly hours and last evauation score histograms are bimodal. There are two main group of workers in this company: one works for short (~150 h) on works for very long (~260 h) with medium (~0.55) and high evaluation scores (~0.85).
 
 Let's have a look at departmentwise job satisfaction level of the employees.
 
@@ -271,7 +271,7 @@ ggplot(data = depLeftSatis, aes( x = reorder(departments, -LeftRate), y = LeftRa
 
 Among all the departments, _HR_ is the one with highest attrition rate, then follows _Accounting_. The top three departments are also the most unsatisfied ones in which _Accounting_ peaks in unhappiness. From the graph above we deduced that _Satisfaction Level_ is a pretty important factor in quitting the company.
 
-We also replotted the graph above by filling each bar according to the salary distribution of the department of interest. The salary imbalance within the departments as well as the whole company is apperent again. Even the managers in the _Management Department_ are not paid highly since nearly none of its employees are paid high.
+We also replotted the graph above by filling each bar according to the salary distribution of the department of interest. The salary imbalance within the departments as well as the whole company is apperent again.
 
 ```{r}
 depLeftSatis <- d %>% group_by(departments,salary) %>% summarise(Total =n(),LeftCount = sum(left), Satisfaction = mean(satisfaction_level) ) %>% mutate(LeftRate = LeftCount/Total)
@@ -289,9 +289,6 @@ Notice that altough job satisfaction level is uniformly distributed among the de
 Now, let's look at the categorical variables; salary and departments. We wanted to compare the resigned and the remained employees by departments and salary categories. Bear in mind that in the graphs below the left ratio is not plotted but total count is. The departments with the highest left ratio are _HR_, _Accounting_ and _Technical_ departments. We already noticed that salary category did not give much insight about the characteristics of people left. However, if one is paid high in this company he/she is unlikely to resing.
 
 ```{r}
-# install.packages("ggthemes") # Install 
-library(ggthemes) # Load
-
 p9 <- ggplot(d, aes(x=d$departments,fill=as.character(d$left)))+
       theme_economist() + 
       scale_color_economist()+
@@ -335,7 +332,7 @@ We pairwise plotted job satisfaction level versus average montly hours and also 
 ```{r}
 
 #Define three main groups which left the company 
-d$left <- factor(d$left, labels=c("No", "Yes"))
+d$left <- factor(d$left, labels=c("Working", "Quitted"))
 
 gg <- ggplot(d,aes(satisfaction_level,average_montly_hours)) +   theme_economist() + scale_color_economist()
 
@@ -401,7 +398,7 @@ gg + geom_encircle(data=subset(d,
 
   scale_x_continuous(breaks=seq(0.08, 1, 0.08), limits = c(0.08, 1)) + 
   scale_y_continuous(breaks =  seq(0,10,by=2), limits = c(0,10))+
-  labs(x="Satisfaction Level",y="Time Spend In Company (Years)", title="Satisfaction Level vs. Time Spend In Company (Years)",col="Left Work") 
+  labs(x="Satisfaction Level",y="Time Spend In Company (Years)", title="Satisfaction Level vs. Time Spent In Company (Years)",col="Left Work") 
 ```
 
 
@@ -447,6 +444,8 @@ Cumulative variance plot is as below:
 ```{r}
 
 ggplot(data.frame(pc=1:8,cum_var=c(0.4123323, 0.5755905, 0.7074989, 0.8332550,0.9502024,0.97166737,0.98797999,1.00000000)),aes(x=pc,y=cum_var)) + 
+  theme_economist() +
+  scale_color_economist() +
   geom_point() +
   geom_line() +
   labs(x="Principal Component Number",
@@ -466,19 +465,19 @@ We tried K-Means clustering to be able to cluster mass of people who left the co
 ```{r}
 
 #Filter to get the data from left people only
-dleft<- subset(d, left=='Yes') 
+dleft<- subset(d, left=='Quitted') 
 dleft<- select(dleft,-left)
 
 
 #apply k-means with 3 clusters and 30 iterations
-set.seed(20)
+set.seed(42)
 dleft_Cluster <- kmeans(dleft[, 1:7], 3, nstart = 30)
 
-head(dleft_Cluster,5)
+dleft_Cluster$centers
 
 ```
 
-When we compare the values of 3 clusters with our previously defined groups in two graphs (Satisfaction Level vs. Avg. Monthly Hours, Satisfaction Level vs. Time Spend In Company), we found that there are similarities below:
+When we compare the center values of 3 clusters with our previously defined groups in the previous two graphs (Satisfaction Level vs. Avg. Monthly Hours, Satisfaction Level vs. Time Spend In Company), we are able to math them with the groups found in EDA
 
 + Cluster 1: High satisfaction level, long working hours, leaves late (corresponds to Group 3)
 + Cluster 2: Low satisfaction level, very long working hours, leaves at medium term (corresponds to Group 1) 
@@ -487,7 +486,7 @@ When we compare the values of 3 clusters with our previously defined groups in t
 Thus, one can conclude that leaving reasons depends on the employee's characteristics. Ones with medium satisfaction level, do not dedicate to work very much may be because they do not see any future in the company and quit early. Self-motivated ones work patiently long hours for long years but at the end they quit. Even low satisfied ones could work for very long hours they quit in medium terms.
 
 
-## Decision Three Analysis and Prediction
+## Decision Tree Analysis and Prediction
 
 We first set seed to a constant value.
 ```{r, warning=FALSE}
@@ -495,41 +494,34 @@ set.seed(42)
 ```
 Then _left_ column is chosen as response and the rest are chosen as predictors. We put them in a data frame.
 ```{r}
-  d %>% # read in the data
+head(d)
+```
+
+```{r}
+  d <- d %>% # read in the data
   select(left, departments, satisfaction_level, 
          last_evaluation, number_project, average_montly_hours,
          time_spend_company, promotion_last_5years, salary) %>%
   mutate(departments = factor(departments), 
-         salary = factor(salary)) %>% head(10)
+         salary = factor(salary))
+head(d)
 
 ```
 
-Then we randomly splitted our data int
-```{r}
-#Split data into training and test sets
-.d <- c("training", "test") %>%
-  sample(nrow(d), replace = T) %>%
-  split(d, .)
-```
-We shuffle the dataset, name the result shuffled
-```{r}
-n <- nrow(d)
-shuffled <- d[sample(n),]
-```
 Split the data in train and test
 ```{r}
-train_ind<-1:round(0.7 * n)
-train_d<-shuffled[train_ind,]
-test_ind<-(round(0.7 * n) + 1):n
-test_d<-shuffled[test_ind,]
+n <- nrow(d)
+indices <- sample(n, n*0.7)
+train_d <- d[indices, ]
+test_d <- d[-indices, ]
+head(train_d)
 ```
 
 We fit the model
 
 ```{r}
 
-rtree_fit <- rpart(left ~ ., 
-          train_d) 
+rtree_fit <- rpart(left ~ ., data = train_d) 
 rpart.plot(rtree_fit)
 
 ```
@@ -539,15 +531,27 @@ To test the fit quality, we applied our model with fitted parameters to test dat
 
 ```{r}
 res <- predict(rtree_fit, test_d)
-
 auc(as.numeric(test_d$left) - 1, res[, 2])
 ```
 
-Prediction success of 97% is very good. We can comfortably say that
+Prediction success of 97% is very good. We can comfortably say that primary factor that determines an employee's resignation is **satisfaction level**. If it is lower than 46%, people tend to quit. Those unhappy guys are divided into two categories:
+
++ If he/she works on many projects (more than 2.5 on yearly basis), they still leave if they are desperately unsatisfied with the job (threshold level = 0.11). Those must belong to **Cluster 2** (i.e Group 1) because they have such a low satisfaction value but still work on more projects. Since number of projects correlates with average working hours, they must work for long hours to complete the projects. 
+
++ If he/she works on few projects (less than 2.5 on yearly basis), they still leave even if their bosses are happy about their work (evaluation score > 0.56). Much probably they fall into  **Cluster 3** (i.e Group 2) because they are not very much satisfied with the job and the number of projects they work on is not much. So they do not commit long hours to work as those folks in the last cluster.
+
+Secondary factor that determines the satisfied employees quit decision is **time spent in the company**. If someone is working in the same company between 4.5 - 6.5 years, they break their comfort zone and flee because they work for long hours (> 216 h monthly basis) even if their bosses are very happy with their work (evaluation score > 0.80). We belive that this category corresponds to patient, hardworking, motivated employees of **Cluster 1** (i.e. Group 3).
 
 ## Conclusion
 
-Our EDA is in good compliance with the results deduced from K-Means clustering. We are able to match our previously found groups with three clusters.  
+Our EDA is in good compliance with the results deduced from K-Means clustering. We are able to match our previously found groups with three clusters. Furthermore Decision Tree Analysis supports our findings. As a conlusion, we find that the satisfaction level is the key factor to quit the job. 
+
+The company of interest is not paying much to its employees or promotes. Low and medium salary ranges are the highest portion of their pay check. Thus, since everbody is equal in the minimum, salary and promotion are not that important as satisfaction level.  If employee's satisfaction level is higher than 0.46, he/she will not quit in a short period. However, when the satisfaction level decreases, other factors will become important for the resignation decison such as number of projects or working hours. 
+
+This company has three different categories of employees left. First group is working very hard with low satisfaction level, it is expected that this group members quit the job. Second group has low(close to medium) satisfaction level and average monthly hours but they leave, for this group time spend company is the decision factor. People are leaving before 4,5 years from company. Most probably, they leave the company earlier if there is no uptunn in their working conditions.
+
+The most interesting group is the last one, those of experienced ones who tend to work for long hours with high satisfaction score. For instance if you work in the company less than 4.5 years with higher evaluation score above 0.8 and working more than 216 hours in monthly, you are very close to leave the company. It is obvious that this group likes to work for long hours due to their intrinsic high motivation but they leave the company around 4-6 years. They must be getting better offers. If you a have passion for your work and feeling that you are not paid what you deserve, surely you leave the company. 
+
 
 ## References
 
