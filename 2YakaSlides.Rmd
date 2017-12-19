@@ -1,6 +1,6 @@
 ---
 title: "Why Do Employees Quit Prematurely?"
-author: "Group 2Yaka: Duygu Can, Cihan Tektunalı, Murat Dönmez, Meryem Kemerci"
+author: "Group 2Yaka: Duygu Can, Cihan Tektunali, Murat Donmez, Meryem Kemerci"
 date: "December 19, 2017"
 output: 
   ioslides_presentation: 
@@ -364,11 +364,11 @@ Secondary factor that determines the satisfied employees quit decision is **time
 
 ## Conclusion
 
-+ If he/she works on many projects (more than 2.5 on yearly basis), they still leave if they are desperately unsatisfied with the job (threshold level = 0.11). Those must belong to **Cluster 2** (i.e Group 1) because they have such a low satisfaction value but still work on more projects. Since number of projects correlates with average working hours, they must work for long hours to complete the projects. 
-
-+ If he/she works on few projects (less than 2.5 on yearly basis), they still leave even if their bosses are happy about their work (evaluation score > 0.56). Much probably they fall into  **Cluster 3** (i.e Group 2) because they are not very much satisfied with the job and the number of projects they work on is not much. So they do not commit long hours to work as those folks in the last cluster.
-
-Secondary factor that determines the satisfied employees quit decision is **time spent in the company**. If someone is working in the same company between 4.5 - 6.5 years, they break their comfort zone and flee because they work for long hours (> 216 h monthly basis) even if their bosses are very happy with their work (evaluation score > 0.80). We belive that this category corresponds to patient, hardworking, motivated employees of **Cluster 1** (i.e. Group 3).
+>- Satisfaction determines resignation. If low they quit!
+>- People w/ VERY LOW satisfaction can work for VERY LONG working hours, ends the contract in medium terms.
+>- People w/ MEDIOCRE satisfaction DO NOT work for long hours, resign quickly.
+>- Patient, HIGHLY satisfied, hardworking workers quit latest.
+>- Promotion and salary system must be improved for the good of the employees.
 
 ## References
 

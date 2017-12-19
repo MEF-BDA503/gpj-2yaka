@@ -236,7 +236,7 @@ p8 <- ggplot(subset(d), aes(x=promotion_last_5years, colour=promotion_last_5year
 multiplot(p1,p2,p3,p4,p5,p6,p7,p8,cols=3)
 ```
 
-According to above histograms, we found that; there was nearly no promoted employee in the last five years. Bear in mind that the work accident data belongs to last two years and frequency of accidents is low but not zero. Monthly time spent in the company and number of projects which each employee works on both have positively skewed distributions. So, instead of mean, median value must be considered. Thus, a common employee works 4 projects per year, spending 200 hours per month. Average monthl
+According to above histograms, we found that; there was nearly no promoted employee in the last five years. Bear in mind that the work accident data belongs to last two years and frequency of accidents is low but not zero. Monthly time spent in the company and number of projects which each employee works on both have positively skewed distributions. So, instead of mean, median value must be considered. Thus, a common employee works 4 projects per year, spending 200 hours per month. Average monthly hours and last evauation score histograms are bimodal. There are two main group of workers in this company: one works for short (~150 h) on works for very long (~260 h) with medium (~0.55) and high evaluation scores (~0.85).
 
 Let's have a look at departmentwise job satisfaction level of the employees.
 
@@ -544,7 +544,14 @@ Secondary factor that determines the satisfied employees quit decision is **time
 
 ## Conclusion
 
-Our EDA is in good compliance with the results deduced from K-Means clustering. We are able to match our previously found groups with three clusters. Furthermore Decision Tree Analysis supports our findings. 
+Our EDA is in good compliance with the results deduced from K-Means clustering. We are able to match our previously found groups with three clusters. Furthermore Decision Tree Analysis supports our findings. As a conlusion, we find that the satisfaction level is the key factor to quit the job. 
+
+The company of interest is not paying much to its employees or promotes. Low and medium salary ranges are the highest portion of their pay check. Thus, since everbody is equal in the minimum, salary and promotion are not that important as satisfaction level.  If employee's satisfaction level is higher than 0.46, he/she will not quit in a short period. However, when the satisfaction level decreases, other factors will become important for the resignation decison such as number of projects or working hours. 
+
+This company has three different categories of employees left. First group is working very hard with low satisfaction level, it is expected that this group members quit the job. Second group has low(close to medium) satisfaction level and average monthly hours but they leave, for this group time spend company is the decision factor. People are leaving before 4,5 years from company. Most probably, they leave the company earlier if there is no uptunn in their working conditions.
+
+The most interesting group is the last one, those of experienced ones who tend to work for long hours with high satisfaction score. For instance if you work in the company less than 4.5 years with higher evaluation score above 0.8 and working more than 216 hours in monthly, you are very close to leave the company. It is obvious that this group likes to work for long hours due to their intrinsic high motivation but they leave the company around 4-6 years. They must be getting better offers. If you a have passion for your work and feeling that you are not paid what you deserve, surely you leave the company. 
+
 
 ## References
 
