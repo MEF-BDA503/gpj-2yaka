@@ -341,8 +341,8 @@ dleft_Cluster$centers
 ```
 ## Cluster-Group Correspondence
 + Cluster 1: High satisfaction level, long working hours, leaves late (corresponds to Group 3)
-+ Cluster 2: Low satisfaction level, very long working hours, leaves at medium term (corresponds to Group 1) 
-+ Cluster 3: Medium satisfaction level, low working hours, leaves early (corresponds to Group 2)
++ Cluster 2: Low satisfaction level, very long working hours, leaves at medium term (corresponds to Group 2) 
++ Cluster 3: Medium satisfaction level, low working hours, leaves early (corresponds to Group 1)
 
 ## Decision Tree Analysis And Prediction
 ```{r}
