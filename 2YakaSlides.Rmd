@@ -17,6 +17,8 @@ knitr::opts_chunk$set(echo = FALSE)
 ## Packages Employed
 
 ```{r, message=FALSE,warning=FALSE, echo=TRUE}
+library(plyr)
+library(scales)
 library(tidyverse)
 library(ggplot2)
 library(ggcorrplot)
@@ -28,6 +30,7 @@ library(party)
 library(rpart)
 library(rpart.plot)
 library(pROC)
+
 ```
 ## Human Resources Data Set
 
@@ -301,11 +304,12 @@ ggcorrplot(CorrMat, hc.order = TRUE,
 ```
 
 ## PCA: Biplot
-```{r, echo=FALSE,fig.align='center'}
+```{r, echo=FALSE,fig.align='center', warning=FALSE,  error=FALSE, fig.height=5}
 dLeft_pca <- dLeft  %>% mutate(salary_Num = ifelse(salary == "low", 0, ifelse(salary == "medium", 1, 2))) %>% select(-salary,-departments)
 pca_w_scaling<-princomp(as.matrix(dLeft_pca[,1:8]),cor=TRUE)
 #summary(pca_w_scaling,loadings=TRUE)
-biplot(pca_w_scaling)
+library(ggbiplot)
+ggbiplot(pca_w_scaling, labels= dLeft$satisfaction_level) +theme_economist()+ scale_color_economist() 
 ```
 
 ## PCA: Cumulative Variance
@@ -376,3 +380,4 @@ Secondary factor that determines the satisfied employees quit decision is **time
 - [Explore & Explain: Density & Decision Trees](https://www.kaggle.com/msjgriffiths/explore-explain-density-decision-trees)
 - [Titanic: Getting Starting with R - Part 3: Decision Trees](http://trevorstephens.com/kaggle-titanic-tutorial/r-part-3-decision-trees/)
 - [Intro to Decision Trees with R Example](https://rpubs.com/osazuwa/123908)
+- [StackExchange](https://stats.stackexchange.com/questions/2038/interpretation-of-biplots-in-principal-components-analysis)

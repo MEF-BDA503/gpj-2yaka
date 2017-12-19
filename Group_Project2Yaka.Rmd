@@ -44,7 +44,6 @@ library(tidyverse)
 library(ggplot2)
 library(ggcorrplot)
 library(ggthemes)
-library(shiny)
 library(formattable)
 library(htmlwidgets)
 library(ggalt)
@@ -431,18 +430,27 @@ Correlogram created from numerical values in our dataset shows that Average Mont
 ## Principal Component Analysis
 
 With the insight gained from the correlation matrix of the employees who are already left. Before starting to principal component analysis we need to transform salaries to numeric values to see their effect on left rate. We need also to scale our data to avoid the dominance of the columns with high variance.
-```{r}
+```{r, echo=FALSE,warnings=FALSE}
+library(devtools)
+install_github("vqv/ggbiplot")
+library(ggbiplot)
+
+```
+```{r, warning=FALSE}
 names(dLeft)
 dLeft_pca <- dLeft  %>% mutate(salary_Num = ifelse(salary == "low", 0, ifelse(salary == "medium", 1, 2))) %>% select(-salary,-departments)
 pca_w_scaling<-princomp(as.matrix(dLeft_pca[,1:8]),cor=TRUE)
 summary(pca_w_scaling,loadings=TRUE)
-biplot(pca_w_scaling)
+ggbiplot(pca_w_scaling, labels= dLeft$satisfaction_level) +theme_economist()+ scale_color_economist() 
 ```
 
-Cumulative variance plot is as below: 
+The first four components explains %83 of the variance. With five components even 95% of the variance can be explained. Components that explain lower than 10% of the variance are not considered because they do not contribute much. When we look at the loadings, we understan that PC1 is composed of last evaluation, number of projects, monthly hours and time spent columns; PC2 is composed of satisfaction level, number of projects, monthly hours and time spent columns; PC3 and PC4 are composed of accident, salary and promotion columns. PCA is usefull for dimensionality reduction and we are glad to know that HR data can be explained in number of components lesser than total number of columns.
 
-```{r}
+Principal components (eigenvectors) are linear combinations of actual factors (loadings) with constant coefficients (eigenvalues). By definition they are orthogonal (perpendicular) to eachother. First two eigenvectors maximizes the variance most (explains better). So, when we plot each factor scores in PC1-PC2 plane, we highlighted groups of homogenous individiuals. In the biplot above each point is labelled with satisfaction score, so we can conclude that people left are groupped according to their satisfaction value: very low, medium, high. We believe that groups deduced from PCA matches groups identified from the scatter plots previously.
 
+Also cumulative variance plot is show below: 
+
+```{r, warning=FALSE}
 ggplot(data.frame(pc=1:8,cum_var=c(0.4123323, 0.5755905, 0.7074989, 0.8332550,0.9502024,0.97166737,0.98797999,1.00000000)),aes(x=pc,y=cum_var)) + 
   theme_economist() +
   scale_color_economist() +
@@ -455,15 +463,13 @@ ggplot(data.frame(pc=1:8,cum_var=c(0.4123323, 0.5755905, 0.7074989, 0.8332550,0.
 ```
 
 
-The first four components explains %83 of the variance. 
 
 ## K-Means Clustering
 
-We tried K-Means clustering to be able to cluster mass of people who left the company.
+We tried K-Means clustering to be able to cluster mass of people who left the company. We applied k-Means with 3 clusters and 30 iterations since we expect to find three groups. 
 
 
 ```{r}
-
 #Filter to get the data from left people only
 dleft<- subset(d, left=='Quitted') 
 dleft<- select(dleft,-left)
@@ -474,10 +480,10 @@ set.seed(42)
 dleft_Cluster <- kmeans(dleft[, 1:7], 3, nstart = 30)
 
 dleft_Cluster$centers
-
+#print(sum(dleft_Cluster$withinss))
 ```
 
-When we compare the center values of 3 clusters with our previously defined groups in the previous two graphs (Satisfaction Level vs. Avg. Monthly Hours, Satisfaction Level vs. Time Spend In Company), we are able to math them with the groups found in EDA
+When we compare the center values of three clusters with our previously defined groups our scatter plots (Satisfaction Level vs. Avg. Monthly Hours, Satisfaction Level vs. Time Spend In Company), we are able to match them. 
 
 + Cluster 1: High satisfaction level, long working hours, leaves late (corresponds to Group 3)
 + Cluster 2: Low satisfaction level, very long working hours, leaves at medium term (corresponds to Group 1) 
@@ -493,9 +499,6 @@ We first set seed to a constant value.
 set.seed(42)
 ```
 Then _left_ column is chosen as response and the rest are chosen as predictors. We put them in a data frame.
-```{r}
-head(d)
-```
 
 ```{r}
   d <- d %>% # read in the data
@@ -520,10 +523,8 @@ head(train_d)
 We fit the model
 
 ```{r}
-
 rtree_fit <- rpart(left ~ ., data = train_d) 
 rpart.plot(rtree_fit)
-
 ```
 
 
@@ -544,7 +545,7 @@ Secondary factor that determines the satisfied employees quit decision is **time
 
 ## Conclusion
 
-Our EDA is in good compliance with the results deduced from K-Means clustering. We are able to match our previously found groups with three clusters. Furthermore Decision Tree Analysis supports our findings. As a conlusion, we find that the satisfaction level is the key factor to quit the job. 
+Our EDA is in good compliance with the results deduced from K-Means clustering. We are able to match our previously found groups with three clusters. With help of PCA we ensured that employees quitted falls into three subgroups with differing satisfaction scores. Furthermore Decision Tree Analysis supports our findings. As a conlusion, we find that the satisfaction level is the key factor to quit the job. 
 
 The company of interest is not paying much to its employees or promotes. Low and medium salary ranges are the highest portion of their pay check. Thus, since everbody is equal in the minimum, salary and promotion are not that important as satisfaction level.  If employee's satisfaction level is higher than 0.46, he/she will not quit in a short period. However, when the satisfaction level decreases, other factors will become important for the resignation decison such as number of projects or working hours. 
 
@@ -563,4 +564,5 @@ The most interesting group is the last one, those of experienced ones who tend t
 
 [Intro to Decision Trees with R Example](https://rpubs.com/osazuwa/123908)
 
+[StackExchange](https://stats.stackexchange.com/questions/2038/interpretation-of-biplots-in-principal-components-analysis)
 
