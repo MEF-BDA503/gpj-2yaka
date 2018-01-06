@@ -286,7 +286,7 @@ gg + geom_encircle(data=subset(d,
 ## Group Characteristics
 
 + *Group 1:* Low satisfaction level, long working hours and leaves in medium term (3-5 years)
-+ *Group 2:* Mediocre satisfaction level, low working hours and leaves early (around 3 years)
++ *Group 2:* Mediocre satisfaction level, short working hours and leaves early (around 3 years)
 + *Group 3:* High satisfaction level and high working hours and leaves late (5-6 years)
 
 ## Correlation Matrix
@@ -341,8 +341,8 @@ dleft_Cluster$centers
 ```
 ## Cluster-Group Correspondence
 + Cluster 1: High satisfaction level, long working hours, leaves late (corresponds to Group 3)
-+ Cluster 2: Low satisfaction level, very long working hours, leaves at medium term (corresponds to Group 2) 
-+ Cluster 3: Medium satisfaction level, low working hours, leaves early (corresponds to Group 1)
++ Cluster 2: Low satisfaction level, very long working hours, leaves at medium term (corresponds to Group 1) 
++ Cluster 3: Medium satisfaction level, short working hours, leaves early (corresponds to Group 2)
 
 ## Decision Tree Analysis And Prediction
 ```{r}
